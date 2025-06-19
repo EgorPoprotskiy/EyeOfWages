@@ -73,32 +73,17 @@ fun MonthEntryScreen(
                 //отступы внутри Column
                 .padding(10.dp)
         ) {
-            //Для запоминания состояния полей ввода
-            var oklad by remember { mutableStateOf("") }
-            var norma by remember { mutableStateOf("") }
-            var rabTime by remember { mutableStateOf("") }
-            var nochTime by remember { mutableStateOf("") }
-            var prazdTime by remember { mutableStateOf("") }
-            var premia by remember { mutableStateOf("") }
-            var visluga by remember { mutableStateOf("") }
-            var prikazDen by remember { mutableStateOf("") }
-            var prikazNoch by remember { mutableStateOf("") }
-
-            InputText(oklad, onValueChange = {oklad = it }, stringResource(R.string.oklad))
-            InputText(norma, onValueChange = {norma = it },stringResource(R.string.norma))
-            InputText(rabTime, onValueChange = {rabTime = it },stringResource(R.string.rab_time))
-            InputText(nochTime, onValueChange = {nochTime= it },stringResource(R.string.noch_time))
-            InputText(prazdTime, onValueChange = {prazdTime = it },stringResource(R.string.prazd_time))
-            InputText(premia, onValueChange = {premia = it },stringResource(R.string.premia))
-
-//        InputText(stringResource(R.string.visluga))
-//        InputText(stringResource(R.string.prikaz))
-        InputText(prikazDen, onValueChange = {prikazDen = it },stringResource(R.string.prikaz_den))
-        InputText(prikazNoch, onValueChange = {prikazNoch = it },stringResource(R.string.prikaz_noch))
+            InputText(viewModel.oklad, onValueChange = {viewModel.oklad = it }, stringResource(R.string.oklad))
+            InputText(viewModel.norma, onValueChange = {viewModel.norma = it },stringResource(R.string.norma))
+            InputText(viewModel.rabTime, onValueChange = {viewModel.rabTime = it },stringResource(R.string.rab_time))
+            InputText(viewModel.nochTime, onValueChange = {viewModel.nochTime= it },stringResource(R.string.noch_time))
+            InputText(viewModel.prazdTime, onValueChange = {viewModel.prazdTime = it },stringResource(R.string.prazd_time))
+            InputText(viewModel.premia, onValueChange = {viewModel.premia = it },stringResource(R.string.premia))
+            InputText(viewModel.prikazDen, onValueChange = {viewModel.prikazDen = it },stringResource(R.string.prikaz_den))
+            InputText(viewModel.prikazNoch, onValueChange = {viewModel.prikazNoch = it },stringResource(R.string.prikaz_noch))
 
             //Выбор выслуги лет
             val vislugaOptions = listOf("0", "5", "10", "15")
-//            var selectedVislugaOption by remember { mutableStateOf(vislugaOptions[0]) }
             Column {
                 Text(
                     text = stringResource(R.string.visluga),
@@ -115,8 +100,8 @@ fun MonthEntryScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = (text == visluga),
-                                onClick = { visluga = text }
+                                selected = (text == viewModel.visluga),
+                                onClick = { viewModel.visluga = text }
                             )
                             Text(text = text)
                         }
@@ -129,20 +114,8 @@ fun MonthEntryScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 onClick = {
-                    //собирает введенные данные в объект Month и далее в переменную data
-                    val data = Month(
-                        oklad = oklad.toIntOrNull() ?: 0,
-                        norma = norma.toIntOrNull() ?: 0,
-                        rabTime = rabTime.toIntOrNull() ?: 0,
-                        nochTime = nochTime.toIntOrNull() ?: 0,
-                        prazdTime = prazdTime.toIntOrNull() ?: 0,
-                        premia = premia.toIntOrNull() ?: 0,
-                        visluga = visluga.toIntOrNull() ?: 0,
-                        prikazDen = prikazDen.toIntOrNull() ?: 0,
-                        prikazNoch = prikazNoch.toIntOrNull() ?: 0
-                    )
                     //передает данные в viewModel
-//                    viewModel.setData(data)
+                    val data = viewModel.toMonth()
                     navigateToMonthDetails(data)
                 }
             ) {
@@ -157,12 +130,12 @@ fun InputText(
     value: String,
     onValueChange: (String) -> Unit,
     label: String) {
-//    var numberText by remember { mutableStateOf(inputData) }
     OutlinedTextField(
         value = value,
-        onValueChange = {
-            if (it.all { ch -> ch.isDigit() })
-                onValueChange(it)
+        onValueChange = {input ->
+            // Если поле пустое, ставим "0"
+            val newValue = if (input.isEmpty()) "0" else input.filter { it.isDigit() }
+            onValueChange(newValue)
                         },
         label = { Text(text = label) },
         modifier = Modifier.fillMaxWidth(),
