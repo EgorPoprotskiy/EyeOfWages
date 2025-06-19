@@ -33,8 +33,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.navigation.MonthNavHost
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 
@@ -47,8 +49,9 @@ object MonthEntryDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthEntryScreen(
-    navigateToMonthDetails: () -> Unit,
-    modifier: Modifier = Modifier
+    navigateToMonthDetails: (Month) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MonthEntryViewModel = viewModel()
 ) {
     //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -70,22 +73,32 @@ fun MonthEntryScreen(
                 //отступы внутри Column
                 .padding(10.dp)
         ) {
+            //Для запоминания состояния полей ввода
+            var oklad by remember { mutableStateOf("") }
+            var norma by remember { mutableStateOf("") }
+            var rabTime by remember { mutableStateOf("") }
+            var nochTime by remember { mutableStateOf("") }
+            var prazdTime by remember { mutableStateOf("") }
+            var premia by remember { mutableStateOf("") }
+            var visluga by remember { mutableStateOf("") }
+            var prikazDen by remember { mutableStateOf("") }
+            var prikazNoch by remember { mutableStateOf("") }
 
-            InputText(stringResource(R.string.oklad))
-            InputText(stringResource(R.string.norma))
-            InputText(stringResource(R.string.rab_time))
-            InputText(stringResource(R.string.noch_time))
-            InputText(stringResource(R.string.prazd_time))
-            InputText(stringResource(R.string.premia))
+            InputText(oklad, onValueChange = {oklad = it }, stringResource(R.string.oklad))
+            InputText(norma, onValueChange = {norma = it },stringResource(R.string.norma))
+            InputText(rabTime, onValueChange = {rabTime = it },stringResource(R.string.rab_time))
+            InputText(nochTime, onValueChange = {nochTime= it },stringResource(R.string.noch_time))
+            InputText(prazdTime, onValueChange = {prazdTime = it },stringResource(R.string.prazd_time))
+            InputText(premia, onValueChange = {premia = it },stringResource(R.string.premia))
 
 //        InputText(stringResource(R.string.visluga))
 //        InputText(stringResource(R.string.prikaz))
-        InputText(stringResource(R.string.prikaz_den))
-        InputText(stringResource(R.string.prikaz_noch))
+        InputText(prikazDen, onValueChange = {prikazDen = it },stringResource(R.string.prikaz_den))
+        InputText(prikazNoch, onValueChange = {prikazNoch = it },stringResource(R.string.prikaz_noch))
 
             //Выбор выслуги лет
             val vislugaOptions = listOf("0", "5", "10", "15")
-            var selectedVislugaOption by remember { mutableStateOf(vislugaOptions[0]) }
+//            var selectedVislugaOption by remember { mutableStateOf(vislugaOptions[0]) }
             Column {
                 Text(
                     text = stringResource(R.string.visluga),
@@ -102,46 +115,36 @@ fun MonthEntryScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = (text == selectedVislugaOption),
-                                onClick = { selectedVislugaOption = text }
+                                selected = (text == visluga),
+                                onClick = { visluga = text }
                             )
                             Text(text = text)
                         }
                     }
                 }
             }
-            //Выбор приказа
-//            val options = listOf("нет", "день", "ночь")
-//            var selectedOption by remember { mutableStateOf(options[0]) }
-//            Column {
-//                Text(
-//                    text = stringResource(R.string.prikaz),
-//                    style = MaterialTheme.typography.titleMedium,
-//                    modifier = Modifier.padding(horizontal = 8.dp)
-//                )
-//                Row(
-//                    modifier = Modifier.padding(horizontal = 8.dp),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    options.forEach { text ->
-//                        Row(
-//                            modifier = Modifier.weight(1f),
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            RadioButton(
-//                                selected = (text == selectedOption),
-//                                onClick = { selectedOption = text }
-//                            )
-//                            Text(text = text)
-//                        }
-//                    }
-//                }
-//            }
+
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp),
-                onClick = navigateToMonthDetails
+                onClick = {
+                    //собирает введенные данные в объект Month и далее в переменную data
+                    val data = Month(
+                        oklad = oklad.toIntOrNull() ?: 0,
+                        norma = norma.toIntOrNull() ?: 0,
+                        rabTime = rabTime.toIntOrNull() ?: 0,
+                        nochTime = nochTime.toIntOrNull() ?: 0,
+                        prazdTime = prazdTime.toIntOrNull() ?: 0,
+                        premia = premia.toIntOrNull() ?: 0,
+                        visluga = visluga.toIntOrNull() ?: 0,
+                        prikazDen = prikazDen.toIntOrNull() ?: 0,
+                        prikazNoch = prikazNoch.toIntOrNull() ?: 0
+                    )
+                    //передает данные в viewModel
+//                    viewModel.setData(data)
+                    navigateToMonthDetails(data)
+                }
             ) {
                 Text(text = stringResource(R.string.raschet))
             }
@@ -150,15 +153,21 @@ fun MonthEntryScreen(
 }
 
 @Composable
-fun InputText(numberDescription: String) {
-    var numberText by remember { mutableStateOf("") }
+fun InputText(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String) {
+//    var numberText by remember { mutableStateOf(inputData) }
     OutlinedTextField(
-        value = numberText,
-        onValueChange = { it },
-        label = { Text(text = numberDescription) },
+        value = value,
+        onValueChange = {
+            if (it.all { ch -> ch.isDigit() })
+                onValueChange(it)
+                        },
+        label = { Text(text = label) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface
