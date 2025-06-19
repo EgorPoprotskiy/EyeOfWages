@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Eye of wages</string>
+    <string name="back_button">Back</string>
+
     <string name="vvod_dannyh">ввод данных</string>
     <string name="detali_rascheta">детали расчета</string>
 
