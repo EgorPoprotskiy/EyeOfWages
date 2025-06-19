@@ -12,4 +12,28 @@ class MonthEntryViewModel: ViewModel() {
     fun setData(data: Month) {
         inputData = data
     }
+
+    var oklad by mutableStateOf("73698")
+    var norma by mutableStateOf("175")
+    var rabTime by mutableStateOf("144")
+    var nochTime by mutableStateOf("68")
+    var prazdTime by mutableStateOf("12")
+    var premia by mutableStateOf("0.4")
+    var visluga by mutableStateOf("0")
+    var prikazDen by mutableStateOf("")
+    var prikazNoch by mutableStateOf("12")
+
+    fun toMonth(): Month {
+        return Month(
+            oklad = oklad.toDoubleOrNull() ?: 0.0,
+            norma = norma.toIntOrNull() ?: 0,
+            rabTime = rabTime.toIntOrNull() ?: 0,
+            nochTime = nochTime.toIntOrNull() ?: 0,
+            prazdTime = prazdTime.toIntOrNull() ?: 0,
+            premia = premia.toDoubleOrNull() ?: 0.0,
+            visluga = visluga.toIntOrNull() ?: 0,
+            prikazDen = prikazDen.toIntOrNull() ?: 0,
+            prikazNoch = prikazNoch.toIntOrNull() ?: 0
+        )
+    }
 }

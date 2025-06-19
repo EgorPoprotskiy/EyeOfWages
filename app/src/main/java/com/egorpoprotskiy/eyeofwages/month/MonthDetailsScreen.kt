@@ -14,12 +14,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
+import kotlin.div
+import kotlin.let
+import kotlin.text.toDouble
+import kotlin.times
 
 object MonthDetailsDestination : NavigationDestination {
     override val route = "month_details"
@@ -32,8 +39,7 @@ fun MonthDetailsScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     canNavigateBack: Boolean = true,
-    viewModel: MonthEntryViewModel = viewModel(),
-//    data: Month?
+    viewModel: MonthEntryViewModel = viewModel()
 ) {
     Scaffold(
         topBar = {
@@ -52,31 +58,46 @@ fun MonthDetailsScreen(
         ) {
             val data = viewModel.inputData
 
-            MonthDetailsRow(stringResource(R.string.rab_time), data?.rabTime)
+            val oneChasDenRub = data?.norma?.let { data.oklad.div(it.toDouble()) }
+            val oneChasNochRub = oneChasDenRub?.times(0.4)
+            val rabTime = oneChasDenRub?.let { data.rabTime.times(it) } ?: 0.0
+            val nochTime = oneChasNochRub?.times(data.nochTime) ?: 0.0
+            val prikazNoch = oneChasDenRub?.let { data.prikazNoch.times(it) } ?: 0.0
+            val premia = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> data?.let { it3 -> (it + it1 + it2) * it3.premia } } } } ?: 0.0
+            val prazdTime = oneChasDenRub?.let { data.prazdTime.times(it) } ?: 0.0
+            val vysluga = rabTime.let { data?.let { it1 -> (it * it1.visluga) / 100 } } ?: 0.0
+            val rayon20 = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> premia.let { it3 -> prazdTime.let { it4 -> vysluga.let { it5 -> (it + it1 + it2 + it3 + it4 + it5) * 0.2 } } } } } } ?: 0.0
+            val severn30 = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> premia.let { it3 -> prazdTime.let { it4 -> vysluga.let { it5 -> (it + it1 + it2 + it3 + it4 + it5) * 0.3 } } } } } } ?: 0.0
+            val rayon10 = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> premia.let { it3 -> prazdTime.let { it4 -> vysluga.let { it5 -> (it + it1 + it2 + it3 + it4 + it5) * 0.1 } } } } } } ?: 0.0
+            val itogBezNdfl = (rabTime + nochTime + prikazNoch + premia + prazdTime + vysluga + rayon20 + severn30 + rayon10)
+            val ndfl = itogBezNdfl * 0.13
+            val itog = itogBezNdfl - ndfl
+
+            MonthDetailsRow(stringResource(R.string.rab_time), rabTime)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.noch_time), 100)
+            MonthDetailsRow(stringResource(R.string.noch_time), nochTime)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.premia), 25000)
+            MonthDetailsRow(stringResource(R.string.premia), premia)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.prazd_time), 5000)
+            MonthDetailsRow(stringResource(R.string.prazd_time), prazdTime)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.prikaz), 25000)
+            MonthDetailsRow(stringResource(R.string.prikaz), prikazNoch)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.rayon_20), 20)
+            MonthDetailsRow(stringResource(R.string.rayon_20), rayon20)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.severn_30), 30)
+            MonthDetailsRow(stringResource(R.string.severn_30), severn30)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.rayon_dop_10), 10)
+            MonthDetailsRow(stringResource(R.string.rayon_dop_10), rayon10)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.visluga), 8000)
+            MonthDetailsRow(stringResource(R.string.visluga), vysluga)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.otpusk), 80000)
+            MonthDetailsRow(stringResource(R.string.otpusk), 0.0)
             Divider(
                 modifier = Modifier.padding(vertical = 5.dp),
                 thickness = 10.dp,
                 color = MaterialTheme.colorScheme.primary
             )
-            MonthDetailsRow(stringResource(R.string.itog), 200000)
+            MonthDetailsRow(stringResource(R.string.itog), itog)
         }
     }
 }
@@ -84,7 +105,7 @@ fun MonthDetailsScreen(
 @Composable
 fun MonthDetailsRow(
     labelDetails: String,
-    monthDetails: Int?,
+    monthDetails: Double?,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -105,9 +126,5 @@ fun MonthDetailsRow(
 @Preview
 @Composable
 fun MonthDetailsScreenPreview() {
-    MonthDetailsScreen(
-        onNavigateUp = { /* Do nothing */ },
-        modifier = TODO(),
-        canNavigateBack = TODO(),
-    )
+//    MonthDetailsScreen(    )
 }
