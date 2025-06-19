@@ -75,9 +75,9 @@ fun MonthEntryScreen(
         ) {
             InputText(viewModel.oklad, onValueChange = {viewModel.oklad = it }, stringResource(R.string.oklad))
             InputText(viewModel.norma, onValueChange = {viewModel.norma = it },stringResource(R.string.norma))
-            InputText(viewModel.rabTime, onValueChange = {viewModel.rabTime = it },stringResource(R.string.rab_time))
-            InputText(viewModel.nochTime, onValueChange = {viewModel.nochTime= it },stringResource(R.string.noch_time))
-            InputText(viewModel.prazdTime, onValueChange = {viewModel.prazdTime = it },stringResource(R.string.prazd_time))
+            InputText(viewModel.rabTime, onValueChange = {viewModel.rabTime = it },stringResource(R.string.rab_time_chas))
+            InputText(viewModel.nochTime, onValueChange = {viewModel.nochTime= it },stringResource(R.string.noch_time_chas))
+            InputText(viewModel.prazdTime, onValueChange = {viewModel.prazdTime = it },stringResource(R.string.prazd_time_chas))
             InputText(viewModel.premia, onValueChange = {viewModel.premia = it },stringResource(R.string.premia))
             InputText(viewModel.prikazDen, onValueChange = {viewModel.prikazDen = it },stringResource(R.string.prikaz_den))
             InputText(viewModel.prikazNoch, onValueChange = {viewModel.prikazNoch = it },stringResource(R.string.prikaz_noch))
@@ -86,7 +86,7 @@ fun MonthEntryScreen(
             val vislugaOptions = listOf("0", "5", "10", "15")
             Column {
                 Text(
-                    text = stringResource(R.string.visluga),
+                    text = stringResource(R.string.visluga_let),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )

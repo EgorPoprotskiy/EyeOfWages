@@ -5,21 +5,28 @@
     <string name="vvod_dannyh">ввод данных</string>
     <string name="detali_rascheta">детали расчета</string>
 
-    <string name="oklad">Оклад</string>
-    <string name="norma">Норма</string>
-    <string name="rab_time">Рабочее время</string>
-    <string name="noch_time">Ночные</string>
-    <string name="prazd_time">Праздничные</string>
-    <string name="premia">Премия</string>
-    <string name="visluga">Выслуга</string>
-    <string name="prikaz">Приказ</string>
-    <string name="prikaz_den">Приказ на день</string>
-    <string name="prikaz_noch">Приказ на ночь</string>
+    <string name="oklad">Оклад, руб.</string>
+    <string name="norma">Норма, час.</string>
+    <string name="rab_time_chas">Рабочее время, час.</string>
+    <string name="rab_time_rub">Рабочее время, руб.:</string>
+    <string name="noch_time_chas">Ночные, час.</string>
+    <string name="noch_time_rub">Ночные, руб.:</string>
+    <string name="prazd_time_chas">Праздничные, час.</string>
+    <string name="prazd_time_rub">Праздничные, руб.:</string>
+    <string name="premia">Премия, %.</string>
+    <string name="premia_rub">Премия, руб.:</string>
+    <string name="visluga_let">Выслуга, лет.</string>
+    <string name="visluga_rub">Выслуга, руб.:</string>
+    <string name="prikaz_chas">Приказ, час.</string>
+    <string name="prikaz_rub">Приказ, руб.:</string>
+    <string name="prikaz_den">Приказ на день, час.</string>
+    <string name="prikaz_noch">Приказ на ночь, час.</string>
     <string name="raschet">Расчитать</string>
-    <string name="otpusk">Отпуск</string>
-    <string name="itog">Итог</string>
-    <string name="rayon_20">Районный коэффициент, 20%</string>
-    <string name="severn_30">Северный коэффициент, 30%</string>
-    <string name="rayon_dop_10">Районный коэффициент(доп), 10%</string>
+    <string name="otpusk_dn">Отпуск, дн.</string>
+    <string name="otpusk_rub">Отпуск, руб.:</string>
+    <string name="itog">Итог, руб.</string>
+    <string name="rayon_20">Районный коэффициент(20%), руб.:</string>
+    <string name="severn_30">Северный коэффициент(30%), руб.:</string>
+    <string name="rayon_dop_10">Районный коэффициент(доп)(10%), руб.:</string>
 
 </resources>

@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
+import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.div
 import kotlin.let
 import kotlin.text.toDouble
@@ -79,31 +81,31 @@ fun MonthDetailsScreen(
             val ndfl = itogBezNdfl * 0.13
             val itog = itogBezNdfl - ndfl
 
-            MonthDetailsRow(stringResource(R.string.rab_time), rabTime)
+            MonthDetailsRow(stringResource(R.string.rab_time_rub), BigDecimal(rabTime).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.noch_time), nochTime)
+            MonthDetailsRow(stringResource(R.string.noch_time_rub), BigDecimal(nochTime).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.premia), premia)
+            MonthDetailsRow(stringResource(R.string.premia), BigDecimal(premia).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.prazd_time), prazdTime)
+            MonthDetailsRow(stringResource(R.string.prazd_time_rub), BigDecimal(prazdTime).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.prikaz), prikazNoch)
+            MonthDetailsRow(stringResource(R.string.prikaz_rub), BigDecimal(prikazNoch).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.rayon_20), rayon20)
+            MonthDetailsRow(stringResource(R.string.rayon_20), BigDecimal(rayon20).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.severn_30), severn30)
+            MonthDetailsRow(stringResource(R.string.severn_30), BigDecimal(severn30).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.rayon_dop_10), rayon10)
+            MonthDetailsRow(stringResource(R.string.rayon_dop_10), BigDecimal(rayon10).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.visluga), vysluga)
+            MonthDetailsRow(stringResource(R.string.visluga_rub), BigDecimal(vysluga).setScale(2, RoundingMode.HALF_UP).toDouble())
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.otpusk), 0.0)
+            MonthDetailsRow(stringResource(R.string.otpusk_rub), 0.0)
             Divider(
                 modifier = Modifier.padding(vertical = 5.dp),
                 thickness = 10.dp,
                 color = MaterialTheme.colorScheme.primary
             )
-            MonthDetailsRow(stringResource(R.string.itog), itog)
+            MonthDetailsRow(stringResource(R.string.itog), BigDecimal(itog).setScale(2, RoundingMode.HALF_UP).toDouble())
         }
     }
 }
