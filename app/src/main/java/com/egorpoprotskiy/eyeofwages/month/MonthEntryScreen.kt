@@ -132,10 +132,12 @@ fun InputText(
     label: String) {
     OutlinedTextField(
         value = value,
-        onValueChange = {input ->
-            // Если поле пустое, ставим "0"
-            val newValue = if (input.isEmpty()) "0" else input.filter { it.isDigit() }
-            onValueChange(newValue)
+        onValueChange = {
+            onValueChange(it)
+//            input ->
+//            // Если поле пустое, ставим "0"
+//            val newValue = if (input.isEmpty()) "0" else input.filter { it.isDigit() }
+//            onValueChange(newValue)
                         },
         label = { Text(text = label) },
         modifier = Modifier.fillMaxWidth(),
