@@ -11,4 +11,10 @@
     <string name="prikaz_den">Приказ на день</string>
     <string name="prikaz_noch">Приказ на ночь</string>
     <string name="raschet">Расчитать</string>
+    <string name="otpusk">Отпуск</string>
+    <string name="itog">Итог</string>
+    <string name="rayon_20">Районный коэффициент, 20%</string>
+    <string name="severn_30">Северный коэффициент, 30%</string>
+    <string name="rayon_dop_10">Районный коэффициент(доп), 10%</string>
+
 </resources>
