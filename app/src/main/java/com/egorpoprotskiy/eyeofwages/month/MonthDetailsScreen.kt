@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 
 object MonthDetailsDestination : NavigationDestination {
@@ -31,6 +32,8 @@ fun MonthDetailsScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     canNavigateBack: Boolean = true,
+    viewModel: MonthEntryViewModel = viewModel(),
+//    data: Month?
 ) {
     Scaffold(
         topBar = {
@@ -47,7 +50,9 @@ fun MonthDetailsScreen(
                 .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            MonthDetailsRow(stringResource(R.string.rab_time), 150000)
+            val data = viewModel.inputData
+
+            MonthDetailsRow(stringResource(R.string.rab_time), data?.rabTime)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
             MonthDetailsRow(stringResource(R.string.noch_time), 100)
             Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
@@ -79,7 +84,7 @@ fun MonthDetailsScreen(
 @Composable
 fun MonthDetailsRow(
     labelDetails: String,
-    monthDetails: Int,
+    monthDetails: Int?,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -101,7 +106,8 @@ fun MonthDetailsRow(
 @Composable
 fun MonthDetailsScreenPreview() {
     MonthDetailsScreen(
-        modifier = Modifier,
-        onNavigateUp = {}
+        onNavigateUp = { /* Do nothing */ },
+        modifier = TODO(),
+        canNavigateBack = TODO(),
     )
 }
