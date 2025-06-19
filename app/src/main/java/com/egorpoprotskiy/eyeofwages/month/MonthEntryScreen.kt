@@ -23,9 +23,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.egorpoprotskiy.eyeofwages.navigation.MonthNavHost
+import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 
+
+object MonthEntryDestination: NavigationDestination {
+    override val route = "month_entry"
+    override val titleHead = R.string.vvod_dannyh
+}
 @Composable
 fun MonthEntryScreen(
+    navigateToMonthDetails: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -102,7 +112,7 @@ fun MonthEntryScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp, vertical = 4.dp),
-            onClick = { /* TODO: Handle save action */ }
+            onClick = navigateToMonthDetails
         ) {
             Text(text = stringResource(R.string.raschet))
         }
@@ -126,8 +136,15 @@ fun InputText(numberDescription: String) {
     )
 }
 
+@Composable
+fun EyeOfWagesApp(navController: NavHostController = rememberNavController()) {
+    MonthNavHost(navController = navController)
+}
+
 @Preview
 @Composable
 fun MonthEntreScreenPreview() {
-    MonthEntryScreen()
+    MonthEntryScreen(
+        navigateToMonthDetails = {}
+    )
 }

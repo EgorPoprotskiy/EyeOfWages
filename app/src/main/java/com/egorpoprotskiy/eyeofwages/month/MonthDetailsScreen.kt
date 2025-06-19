@@ -15,9 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 
+object MonthDetailsDestination: NavigationDestination {
+    override val route = "month_details"
+    override val titleHead = R.string.detali_rascheta
+}
 @Composable
 fun MonthDetailsScreen(
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -74,6 +80,7 @@ fun MonthDetailsRow(
 @Composable
 fun MonthDetailsScreenPreview() {
     MonthDetailsScreen(
-        modifier = Modifier
+        modifier = Modifier,
+        onNavigateUp = {}
     )
 }

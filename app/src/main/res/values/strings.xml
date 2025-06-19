@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Eye of wages</string>
+    <string name="vvod_dannyh">ввод данных</string>
+    <string name="detali_rascheta">детали расчета</string>
+
     <string name="oklad">Оклад</string>
     <string name="norma">Норма</string>
     <string name="rab_time">Рабочее время</string>
