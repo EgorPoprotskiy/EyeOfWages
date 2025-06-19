@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,42 +20,59 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 
-object MonthDetailsDestination: NavigationDestination {
+object MonthDetailsDestination : NavigationDestination {
     override val route = "month_details"
     override val titleHead = R.string.detali_rascheta
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthDetailsScreen(
     onNavigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canNavigateBack: Boolean = true,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        MonthDetailsRow(stringResource(R.string.rab_time), 150000)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.noch_time),100)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.premia),25000)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.prazd_time),5000)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.prikaz),25000)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.rayon_20),20)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.severn_30),30)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.rayon_dop_10),10)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.visluga), 8000)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-        MonthDetailsRow(stringResource(R.string.otpusk), 80000)
-        Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 10.dp)
-        MonthDetailsRow(stringResource(R.string.itog), 200000)
+    Scaffold(
+        topBar = {
+            MonthTopAppBar(
+                title = stringResource(MonthDetailsDestination.titleHead),
+                canNavigateBack = canNavigateBack,
+                navigateUp = onNavigateUp
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            MonthDetailsRow(stringResource(R.string.rab_time), 150000)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.noch_time), 100)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.premia), 25000)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.prazd_time), 5000)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.prikaz), 25000)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.rayon_20), 20)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.severn_30), 30)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.rayon_dop_10), 10)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.visluga), 8000)
+            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
+            MonthDetailsRow(stringResource(R.string.otpusk), 80000)
+            Divider(
+                modifier = Modifier.padding(vertical = 5.dp),
+                thickness = 10.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
+            MonthDetailsRow(stringResource(R.string.itog), 200000)
+        }
     }
 }
 
@@ -75,6 +95,7 @@ fun MonthDetailsRow(
         )
     }
 }
+
 
 @Preview
 @Composable
