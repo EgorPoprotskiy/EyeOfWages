@@ -21,6 +21,7 @@
     <string name="prikaz_rub">Приказ, руб.:</string>
     <string name="prikaz_den">Приказ на день, час.</string>
     <string name="prikaz_noch">Приказ на ночь, час.</string>
+    <string name="prikaz">Приказ, час.</string>
     <string name="raschet">Расчитать</string>
     <string name="otpusk_dn">Отпуск, дн.</string>
     <string name="otpusk_rub">Отпуск, руб.:</string>

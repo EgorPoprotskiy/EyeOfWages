@@ -26,9 +26,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -71,14 +78,42 @@ fun MonthEntryScreen(
                 .padding(10.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            InputText(viewModel.oklad, onValueChange = {viewModel.oklad = it }, stringResource(R.string.oklad))
-            InputText(viewModel.norma, onValueChange = {viewModel.norma = it },stringResource(R.string.norma))
-            InputText(viewModel.rabTime, onValueChange = {viewModel.rabTime = it },stringResource(R.string.rab_time_chas))
-            InputText(viewModel.nochTime, onValueChange = {viewModel.nochTime= it },stringResource(R.string.noch_time_chas))
-            InputText(viewModel.prazdTime, onValueChange = {viewModel.prazdTime = it },stringResource(R.string.prazd_time_chas))
-            InputText(viewModel.premia, onValueChange = {viewModel.premia = it },stringResource(R.string.premia))
-            InputText(viewModel.prikazDen, onValueChange = {viewModel.prikazDen = it },stringResource(R.string.prikaz_den))
-            InputText(viewModel.prikazNoch, onValueChange = {viewModel.prikazNoch = it },stringResource(R.string.prikaz_noch))
+            InputText(
+                viewModel.oklad,
+                onValueChange = { viewModel.oklad = it },
+                stringResource(R.string.oklad)
+            )
+            InputText(
+                viewModel.norma,
+                onValueChange = { viewModel.norma = it },
+                stringResource(R.string.norma)
+            )
+            InputText(
+                viewModel.rabTime,
+                onValueChange = { viewModel.rabTime = it },
+                stringResource(R.string.rab_time_chas)
+            )
+            InputText(
+                viewModel.nochTime,
+                onValueChange = { viewModel.nochTime = it },
+                stringResource(R.string.noch_time_chas)
+            )
+            InputText(
+                viewModel.prazdTime,
+                onValueChange = { viewModel.prazdTime = it },
+                stringResource(R.string.prazd_time_chas)
+            )
+            InputText(
+                viewModel.prikaz,
+                onValueChange = { viewModel.prikaz = it },
+                stringResource(R.string.prikaz)
+            )
+            InputText(
+                viewModel.premia,
+                onValueChange = { viewModel.premia = it },
+                stringResource(R.string.premia)
+            )
+//            InputText(viewModel.prikazDen, onValueChange = {viewModel.prikazDen = it },stringResource(R.string.prikaz_den))
 
             //Выбор выслуги лет
             val vislugaOptions = listOf("0", "5", "10", "15")
@@ -127,18 +162,31 @@ fun MonthEntryScreen(
 fun InputText(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String) {
+    label: String
+) {
+    //9 Для фокуса и управления курсором в текстовом поле
+    var textFieldValue by remember {
+        mutableStateOf(TextFieldValue(text = value))
+    }
+    var isFocused by remember { mutableStateOf(false) }
     OutlinedTextField(
-        value = value,
+        value = textFieldValue,
         onValueChange = {
-            onValueChange(it)
-//            input ->
-//            // Если поле пустое, ставим "0"
-//            val newValue = if (input.isEmpty()) "0" else input.filter { it.isDigit() }
-//            onValueChange(newValue)
-                        },
+            if (it.text.all { ch -> ch.isDigit() }) {
+                textFieldValue = it
+                onValueChange(it.text)
+            }
+        },
         label = { Text(text = label) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused && !isFocused) {
+                    textFieldValue =
+                        textFieldValue.copy(selection = TextRange(0, textFieldValue.text.length))
+                }
+                isFocused = focusState.isFocused
+            },
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         colors = OutlinedTextFieldDefaults.colors(

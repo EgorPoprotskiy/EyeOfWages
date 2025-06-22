@@ -21,7 +21,7 @@ class MonthEntryViewModel: ViewModel() {
     var premia by mutableStateOf("40")
     var visluga by mutableStateOf("0")
     var prikazDen by mutableStateOf("0")
-    var prikazNoch by mutableStateOf("0")
+    var prikaz by mutableStateOf("0")
 
     fun toMonth(): Month {
         return Month(
@@ -32,8 +32,8 @@ class MonthEntryViewModel: ViewModel() {
             prazdTime = prazdTime.toIntOrNull() ?: 0,
             premia = premia.toDoubleOrNull() ?: 0.0,
             visluga = visluga.toIntOrNull() ?: 0,
-            prikazDen = prikazDen.toIntOrNull() ?: 0,
-            prikazNoch = prikazNoch.toIntOrNull() ?: 0
+//            prikazDen = prikazDen.toIntOrNull() ?: 0,
+            prikaz = prikaz.toIntOrNull() ?: 0
         )
     }
 }

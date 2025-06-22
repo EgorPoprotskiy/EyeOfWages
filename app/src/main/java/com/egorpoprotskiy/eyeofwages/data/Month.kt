@@ -8,6 +8,6 @@ data class Month (
     val prazdTime: Int,
     val premia: Double,
     val visluga: Int,
-    val prikazDen: Int,
-    val prikazNoch: Int
+//    val prikazDen: Int,
+    val prikaz: Int
 )
