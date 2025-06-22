@@ -4,11 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "month")
+@Entity(tableName = "month") //это будет data class в таблице БД(month)
 data class Month (
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true) //автоинкрементный первичный ключ(autoGenerate = true — значение будет автоматически генерироваться Room)
     val id: Int = 0,
-    @ColumnInfo(name = "oklad")
+    @ColumnInfo(name = "oklad") //Столбцы таблицы в БД.
     val oklad: Double,
     @ColumnInfo(name = "norma")
     val norma: Int,
