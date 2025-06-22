@@ -1,6 +1,8 @@
 package com.egorpoprotskiy.eyeofwages.month
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import com.egorpoprotskiy.eyeofwages.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -45,67 +51,94 @@ fun MonthDetailsScreen(
     canNavigateBack: Boolean = true,
     viewModel: MonthEntryViewModel = viewModel()
 ) {
+    val data = viewModel.inputData
+    if (data == null) {
+        // Можно показать экран загрузки или заглушку
+        Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Данные не загружены")
+        }
+        return
+    }
     //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MonthTopAppBar(
                 title = stringResource(MonthDetailsDestination.titleHead),
                 canNavigateBack = canNavigateBack,
-                navigateUp = onNavigateUp
+                navigateUp = onNavigateUp,
+                scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = modifier
+        // Математические вычисления
+        val oneChasDenRub = if (data.norma != 0) data.oklad.toDouble() / data.norma else 0.0
+        val oneChasNochRub = oneChasDenRub * 0.4
+
+        val rabTime = data.rabTime * oneChasDenRub
+        val nochTime = data.nochTime * oneChasNochRub
+        val prikazNoch = data.prikazNoch * oneChasDenRub
+
+        val premia = (rabTime + nochTime + prikazNoch) * (data.premia / 100.0)
+        val prazdTime = data.prazdTime * oneChasDenRub
+        val vysluga =
+            (rabTime + nochTime + prikazNoch + premia + prazdTime) * (data.visluga / 100.0)
+
+        val base = rabTime + nochTime + prikazNoch + premia + prazdTime + vysluga
+
+        val rayon20 = base * 0.2
+        val severn30 = base * 0.3
+        val rayon10 = base * 0.1
+
+        val itogBezNdfl = base + rayon20 + severn30 + rayon10
+        val ndfl = itogBezNdfl * 0.13
+        val itog = itogBezNdfl - ndfl
+
+        LazyColumn(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(10.dp),
+                .padding(10.dp)
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            val data = viewModel.inputData
+            item { MonthDetailsRow(stringResource(R.string.rab_time_rub), round2(rabTime)) }
+            item { Divider(thickness = 1.dp) }
 
-            val oneChasDenRub = data?.norma?.let { data.oklad.div(it.toDouble()) }
-            val oneChasNochRub = oneChasDenRub?.times(0.4)
-            val rabTime = oneChasDenRub?.let { data.rabTime.times(it) } ?: 0.0
-            val nochTime = oneChasNochRub?.times(data.nochTime) ?: 0.0
-            val prikazNoch = oneChasDenRub?.let { data.prikazNoch.times(it) } ?: 0.0
-            val premia = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> data?.let { it3 -> (it + it1 + it2) * it3.premia } } } } ?: 0.0
-            val prazdTime = oneChasDenRub?.let { data.prazdTime.times(it) } ?: 0.0
-            val vysluga = rabTime.let { data?.let { it1 -> (it * it1.visluga) / 100 } } ?: 0.0
-            val rayon20 = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> premia.let { it3 -> prazdTime.let { it4 -> vysluga.let { it5 -> (it + it1 + it2 + it3 + it4 + it5) * 0.2 } } } } } } ?: 0.0
-            val severn30 = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> premia.let { it3 -> prazdTime.let { it4 -> vysluga.let { it5 -> (it + it1 + it2 + it3 + it4 + it5) * 0.3 } } } } } } ?: 0.0
-            val rayon10 = rabTime.let { nochTime.let { it1 -> prikazNoch.let { it2 -> premia.let { it3 -> prazdTime.let { it4 -> vysluga.let { it5 -> (it + it1 + it2 + it3 + it4 + it5) * 0.1 } } } } } } ?: 0.0
-            val itogBezNdfl = (rabTime + nochTime + prikazNoch + premia + prazdTime + vysluga + rayon20 + severn30 + rayon10)
-            val ndfl = itogBezNdfl * 0.13
-            val itog = itogBezNdfl - ndfl
+            item { MonthDetailsRow(stringResource(R.string.noch_time_rub), round2(nochTime)) }
+            item { Divider(thickness = 1.dp) }
 
-            MonthDetailsRow(stringResource(R.string.rab_time_rub), BigDecimal(rabTime).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.noch_time_rub), BigDecimal(nochTime).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.premia), BigDecimal(premia).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.prazd_time_rub), BigDecimal(prazdTime).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.prikaz_rub), BigDecimal(prikazNoch).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.rayon_20), BigDecimal(rayon20).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.severn_30), BigDecimal(severn30).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.rayon_dop_10), BigDecimal(rayon10).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.visluga_rub), BigDecimal(vysluga).setScale(2, RoundingMode.HALF_UP).toDouble())
-            Divider(modifier = Modifier.padding(vertical = 5.dp), thickness = 1.dp)
-            MonthDetailsRow(stringResource(R.string.otpusk_rub), 0.0)
-            Divider(
-                modifier = Modifier.padding(vertical = 5.dp),
-                thickness = 10.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
-            MonthDetailsRow(stringResource(R.string.itog), BigDecimal(itog).setScale(2, RoundingMode.HALF_UP).toDouble())
+            item { MonthDetailsRow(stringResource(R.string.premia), round2(premia)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.prazd_time_rub), round2(prazdTime)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.prikaz_rub), round2(prikazNoch)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.rayon_20), round2(rayon20)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.severn_30), round2(severn30)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.rayon_dop_10), round2(rayon10)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.visluga_rub), round2(vysluga)) }
+            item { Divider(thickness = 1.dp) }
+
+            item { MonthDetailsRow(stringResource(R.string.otpusk_rub), round2(0.0)) }
+            item {
+                Divider(
+                    thickness = 10.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            item { MonthDetailsRow(stringResource(R.string.itog), round2(itog)) }
         }
     }
 }
@@ -125,10 +158,14 @@ fun MonthDetailsRow(
         )
         Text(
             modifier = modifier.wrapContentSize(),
-            text = monthDetails.toString(),
+            text = monthDetails?.toString() ?: "-",
         )
     }
 }
+
+//Функция округления числа до 2 знаков после запятой
+fun round2(value: Double): Double =
+    BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toDouble()
 
 
 @Preview

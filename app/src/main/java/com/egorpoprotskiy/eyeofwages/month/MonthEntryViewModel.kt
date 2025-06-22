@@ -13,15 +13,15 @@ class MonthEntryViewModel: ViewModel() {
         inputData = data
     }
 
-    var oklad by mutableStateOf("73698")
-    var norma by mutableStateOf("175")
-    var rabTime by mutableStateOf("144")
-    var nochTime by mutableStateOf("68")
-    var prazdTime by mutableStateOf("12")
-    var premia by mutableStateOf("0.4")
+    var oklad by mutableStateOf("0")
+    var norma by mutableStateOf("0")
+    var rabTime by mutableStateOf("0")
+    var nochTime by mutableStateOf("0")
+    var prazdTime by mutableStateOf("0")
+    var premia by mutableStateOf("40")
     var visluga by mutableStateOf("0")
-    var prikazDen by mutableStateOf("")
-    var prikazNoch by mutableStateOf("12")
+    var prikazDen by mutableStateOf("0")
+    var prikazNoch by mutableStateOf("0")
 
     fun toMonth(): Month {
         return Month(
