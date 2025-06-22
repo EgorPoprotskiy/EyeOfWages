@@ -68,12 +68,12 @@ fun MonthDetailsScreen(
 
         val rabTime = data.rabTime * oneChasDenRub
         val nochTime = data.nochTime * oneChasNochRub
-        val prikazNoch = data.prikazNoch * oneChasDenRub
+        val prikazNoch = data.prikaz * oneChasDenRub
 
         val premia = (rabTime + nochTime + prikazNoch) * (data.premia / 100.0)
         val prazdTime = data.prazdTime * oneChasDenRub
-        val vysluga =
-            (rabTime + nochTime + prikazNoch + premia + prazdTime) * (data.visluga / 100.0)
+//        val vysluga = (rabTime + nochTime + prikazNoch + premia + prazdTime) * (data.visluga / 100.0)
+        val vysluga = (data.oklad) * (data.visluga / 100.0)
 
         val base = rabTime + nochTime + prikazNoch + premia + prazdTime + vysluga
 
@@ -97,52 +97,31 @@ fun MonthDetailsScreen(
             item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.noch_time_rub), round2(nochTime)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.premia), round2(premia)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.prazd_time_rub), round2(prazdTime)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.prikaz_rub), round2(prikazNoch)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.rayon_20), round2(rayon20)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.severn_30), round2(severn30)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.rayon_dop_10), round2(rayon10)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.visluga_rub), round2(vysluga)) }
-            item {
-                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
-            }
-
-            item { MonthDetailsRow(stringResource(R.string.otpusk_rub), round2(0.0)) }
-            item {
-                HorizontalDivider(
-                    thickness = 10.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
+//
+//            item { MonthDetailsRow(stringResource(R.string.otpusk_rub), round2(0.0)) }
+            item { HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary) }
 
             item { MonthDetailsRow(stringResource(R.string.itog), round2(itog)) }
         }
