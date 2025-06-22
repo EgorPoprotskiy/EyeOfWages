@@ -4,28 +4,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import com.egorpoprotskiy.eyeofwages.R
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,10 +28,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.div
-import kotlin.let
-import kotlin.text.toDouble
-import kotlin.times
 
 object MonthDetailsDestination : NavigationDestination {
     override val route = "month_details"
@@ -73,7 +64,7 @@ fun MonthDetailsScreen(
         }
     ) { innerPadding ->
         // Математические вычисления
-        val oneChasDenRub = if (data.norma != 0) data.oklad.toDouble() / data.norma else 0.0
+        val oneChasDenRub = if (data.norma != 0) data.oklad / data.norma else 0.0
         val oneChasNochRub = oneChasDenRub * 0.4
 
         val rabTime = data.rabTime * oneChasDenRub
@@ -104,35 +95,51 @@ fun MonthDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item { MonthDetailsRow(stringResource(R.string.rab_time_rub), round2(rabTime)) }
-            item { Divider(thickness = 1.dp) }
+            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.noch_time_rub), round2(nochTime)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.premia), round2(premia)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.prazd_time_rub), round2(prazdTime)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.prikaz_rub), round2(prikazNoch)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.rayon_20), round2(rayon20)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.severn_30), round2(severn30)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.rayon_dop_10), round2(rayon10)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.visluga_rub), round2(vysluga)) }
-            item { Divider(thickness = 1.dp) }
+            item {
+                HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            }
 
             item { MonthDetailsRow(stringResource(R.string.otpusk_rub), round2(0.0)) }
             item {
-                Divider(
+                HorizontalDivider(
                     thickness = 10.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
