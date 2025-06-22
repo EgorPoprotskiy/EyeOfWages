@@ -99,7 +99,7 @@ fun MonthDetailsScreen(
             item { MonthDetailsRow(stringResource(R.string.noch_time_rub), round2(nochTime)) }
             item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
-            item { MonthDetailsRow(stringResource(R.string.premia), round2(premia)) }
+            item { MonthDetailsRow(stringResource(R.string.premia_rub), round2(premia)) }
             item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
 
             item { MonthDetailsRow(stringResource(R.string.prazd_time_rub), round2(prazdTime)) }
