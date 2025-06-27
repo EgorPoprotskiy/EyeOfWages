@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.navigation.MonthNavHost
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
@@ -196,40 +197,7 @@ fun InputText(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MonthTopAppBar(
-    title: String,
-    canNavigateBack: Boolean,
-    modifier: Modifier = Modifier,
-    scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigateUp: () -> Unit = {}
-) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(title)
-        },
-        modifier = modifier,
-        scrollBehavior = scrollBehavior,
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(
-                    onClick = navigateUp
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button)
-                    )
-                }
-            }
-        }
-    )
-}
 
-@Composable
-fun EyeOfWagesApp(navController: NavHostController = rememberNavController()) {
-    MonthNavHost(navController = navController)
-}
 
 @Preview
 @Composable

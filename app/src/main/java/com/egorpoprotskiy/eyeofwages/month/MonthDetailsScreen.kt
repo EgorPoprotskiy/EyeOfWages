@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -83,7 +84,7 @@ fun MonthDetailsScreen(
 
         val itogBezNdfl = base + rayon20 + severn30 + rayon10
         val ndfl = itogBezNdfl * 0.13
-        val itog = itogBezNdfl - ndfl
+        data.itog = itogBezNdfl - ndfl
 
         LazyColumn(
             modifier = Modifier
@@ -123,7 +124,7 @@ fun MonthDetailsScreen(
 //            item { MonthDetailsRow(stringResource(R.string.otpusk_rub), round2(0.0)) }
             item { HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary) }
 
-            item { MonthDetailsRow(stringResource(R.string.itog), round2(itog)) }
+            item { MonthDetailsRow(stringResource(R.string.itog), round2(data.itog)) }
         }
     }
 }
