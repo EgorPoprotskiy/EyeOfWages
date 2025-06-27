@@ -4,6 +4,7 @@
 
     <string name="vvod_dannyh">ввод данных</string>
     <string name="detali_rascheta">детали расчета</string>
+    <string name="edit_raschet">редактирование расчета</string>
 
     <string name="oklad">Оклад, руб.</string>
     <string name="norma">Норма, час.</string>

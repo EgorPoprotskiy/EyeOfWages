@@ -1,7 +1,10 @@
 package com.egorpoprotskiy.eyeofwages.month
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -29,9 +32,12 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,120 +46,160 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.egorpoprotskiy.eyeofwages.AppViewModelProvider
 import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.navigation.MonthNavHost
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 object MonthEntryDestination : NavigationDestination {
     override val route = "month_entry"
-    override val titleHead = R.string.vvod_dannyh
+    override val titleRes = R.string.vvod_dannyh
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthEntryScreen(
     navigateToMonthDetails: (Month) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: MonthEntryViewModel = viewModel()
+    navigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
+    canNavigateBack: Boolean = true,
+    viewModel: MonthEntryViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val coroutineScope = rememberCoroutineScope()
     //Scaffold для создания макета с верхней панелью(topBar)
     Scaffold(
 //        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MonthTopAppBar(
-                title = stringResource(MonthEntryDestination.titleHead),
-                canNavigateBack = false,
-                scrollBehavior = scrollBehavior
+                title = stringResource(MonthEntryDestination.titleRes),
+                canNavigateBack = canNavigateBack,
+                navigateUp = onNavigateUp
+//                scrollBehavior = scrollBehavior
             )
         }
         //innerPadding - отступы, которые нужно применить к содержимому Scaffold
     ) { innerPadding ->
-        Column(
-            modifier = modifier
+        MonthEntryBody(
+            itemUiState = viewModel.monthUiState,
+            onItemValueChange = viewModel::updateUiState,
+            onSaveClick = {
+                coroutineScope.launch {
+                    viewModel.saveItem()
+                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.toItem())
+                }
+            },
+            modifier = Modifier
                 .padding(innerPadding)
-                //отступы внутри Column
-                .padding(10.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            InputText(
-                viewModel.oklad,
-                onValueChange = { viewModel.oklad = it },
-                stringResource(R.string.oklad)
-            )
-            InputText(
-                viewModel.norma,
-                onValueChange = { viewModel.norma = it },
-                stringResource(R.string.norma)
-            )
-            InputText(
-                viewModel.rabTime,
-                onValueChange = { viewModel.rabTime = it },
-                stringResource(R.string.rab_time_chas)
-            )
-            InputText(
-                viewModel.nochTime,
-                onValueChange = { viewModel.nochTime = it },
-                stringResource(R.string.noch_time_chas)
-            )
-            InputText(
-                viewModel.prazdTime,
-                onValueChange = { viewModel.prazdTime = it },
-                stringResource(R.string.prazd_time_chas)
-            )
-            InputText(
-                viewModel.prikaz,
-                onValueChange = { viewModel.prikaz = it },
-                stringResource(R.string.prikaz)
-            )
-            InputText(
-                viewModel.premia,
-                onValueChange = { viewModel.premia = it },
-                stringResource(R.string.premia)
-            )
-//            InputText(viewModel.prikazDen, onValueChange = {viewModel.prikazDen = it },stringResource(R.string.prikaz_den))
+                .fillMaxWidth()
+        )
+    }
+}
 
-            //Выбор выслуги лет
-            val vislugaOptions = listOf("0", "5", "10", "15")
-            Column {
-                Text(
-                    text = stringResource(R.string.visluga_let),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    vislugaOptions.forEach { text ->
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (text == viewModel.visluga),
-                                onClick = { viewModel.visluga = text }
-                            )
-                            Text(text = text)
-                        }
+@Composable
+fun MonthEntryBody(
+    itemUiState: MonthUiState,
+    onItemValueChange: (MonthDetails) -> Unit,
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large)),
+        modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
+    ) {
+        MonthEntryText(
+            itemDetails = itemUiState.itemDetails,
+            onItemValueChange = onItemValueChange,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            onClick = onSaveClick,
+            enabled = itemUiState.isEntryValid,
+            shape = MaterialTheme.shapes.small,
+        ) {
+            Text(text = stringResource(R.string.raschet))
+        }
+    }
+}
+
+@Composable
+fun MonthEntryText(
+    itemDetails: MonthDetails,
+    modifier: Modifier = Modifier,
+    onItemValueChange: (MonthDetails) -> Unit = {}
+){
+    Column(
+        modifier = modifier
+            //отступы внутри Column
+            .padding(10.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        InputText(
+            itemDetails.oklad,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.oklad)
+        )
+        InputText(
+            itemDetails.norma,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.norma)
+        )
+        InputText(
+            itemDetails.rabTime,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.rab_time_chas)
+        )
+        InputText(
+            itemDetails.nochTime,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.noch_time_chas)
+        )
+        InputText(
+            itemDetails.prazdTime,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.prazd_time_chas)
+        )
+        InputText(
+            itemDetails.prikaz,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.prikaz_chas)
+        )
+        InputText(
+            itemDetails.premia,
+            onItemValueChange as (String) -> Unit,
+            stringResource(R.string.premia)
+        )
+        val vislugaOptions = listOf("0", "5", "10", "15")
+        Column {
+            Text(
+                text = stringResource(R.string.visluga_let),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+            Row(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                vislugaOptions.forEach { text ->
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (text == itemDetails.visluga),
+                            onClick = { itemDetails.visluga = text }
+                        )
+                        Text(text = text)
                     }
                 }
-            }
-
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                onClick = {
-                    //передает данные в viewModel
-                    val data = viewModel.toMonth()
-                    navigateToMonthDetails(data)
-                }
-            ) {
-                Text(text = stringResource(R.string.raschet))
             }
         }
     }
@@ -162,8 +208,9 @@ fun MonthEntryScreen(
 @Composable
 fun InputText(
     value: String,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit = {},
     label: String
+
 ) {
     //9 Для фокуса и управления курсором в текстовом поле
     var textFieldValue by remember {
@@ -202,7 +249,23 @@ fun InputText(
 @Preview
 @Composable
 fun MonthEntreScreenPreview() {
-    MonthEntryScreen(
-        navigateToMonthDetails = {}
-    )
+    MaterialTheme { // Обертка MaterialTheme должна быть здесь
+        MonthEntryBody(
+            itemUiState = MonthUiState(
+                MonthDetails( // Убедитесь, что конструктор соответствует определению MonthDetails
+                    oklad = "10000",
+                    norma = "160",
+                    rabTime = "160",
+                    nochTime = "0",
+                    prazdTime = "0",
+                    premia = "40",
+                    visluga = "0",
+                    prikaz = "0",
+                    itog = "10000" // Возможно, itog здесь не нужен для ввода, если он вычисляется
+                )
+            ),
+            onItemValueChange = {},
+            onSaveClick = {}
+        )
+    }
 }
