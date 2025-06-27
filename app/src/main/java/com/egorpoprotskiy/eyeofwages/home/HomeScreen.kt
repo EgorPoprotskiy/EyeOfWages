@@ -20,22 +20,29 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,22 +50,74 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.egorpoprotskiy.eyeofwages.AppViewModelProvider
+import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.R
+import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.collections.set
 
+object HomeDestination: NavigationDestination {
+    override val route = "home"
+    override val titleRes = R.string.app_name
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    navigateToMonthEntry: () -> Unit,
+    navigateToMonthUpdate: (Int) -> Unit,
+    modifier: Modifier,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.factory)
+) {
+    val homeUiSate by viewModel.homeUiState.collectAsState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MonthTopAppBar(
+                title = stringResource(HomeDestination.titleRes),
+                canNavigateBack = false,
+                scrollBehavior = scrollBehavior
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = navigateToMonthEntry,
+                shape = androidx.compose.material3.MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.vvod_dannyh)
+                )
+            }
+        }
+    ) { innerPadding ->
+        HomeBody(
+            monthList = homeUiSate.monthList,
+            onMonthClick = navigateToMonthUpdate,
+            onSwipeDelete = { month -> viewModel.deleteMonth(month) },
+            modifier = Modifier.padding(innerPadding),
+            contentPadding = innerPadding
+        )
+    }
+}
 
 @Composable
 private fun HomeBody(
     monthList: List<Month>,
-    onMonthClick: (Month) -> Unit,
+    onMonthClick: (Int) -> Unit,
     onSwipeDelete: (Month) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -77,7 +136,7 @@ private fun HomeBody(
         } else {
             MonthList(
                 monthList = monthList,
-                onMonthClick = onMonthClick,
+                onMonthClick = { onMonthClick(it.id)},
                 onSwipeDelete = onSwipeDelete,
                 contentPadding = contentPadding,
                 modifier = modifier

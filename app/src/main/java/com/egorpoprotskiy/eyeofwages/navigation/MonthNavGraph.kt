@@ -12,6 +12,7 @@ import com.egorpoprotskiy.eyeofwages.month.MonthDetailsScreen
 import com.egorpoprotskiy.eyeofwages.month.MonthEntryDestination
 import com.egorpoprotskiy.eyeofwages.month.MonthEntryScreen
 import com.egorpoprotskiy.eyeofwages.month.MonthEntryViewModel
+import com.egorpoprotskiy.eyeofwages.home.HomeDestination
 
 
 @Composable
@@ -21,9 +22,20 @@ fun MonthNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = MonthEntryDestination.route,
+//        startDestination = MonthEntryDestination.route,
+        startDestination = HomeDestination.route,
         modifier = modifier
     ) {
+        //HomeScreen -> EntryScreen or EditScreen
+        composable (route = HomeDestination.route) {
+            
+        }
+
+        //EntryScreen -> HomeScreen
+
+
+
+        //EntryScreen -> DetailsScreen
         composable(route = MonthEntryDestination.route) {
             backStackEntry ->
             val viewModel: MonthEntryViewModel = viewModel(backStackEntry)
@@ -34,6 +46,8 @@ fun MonthNavHost(
                 }
             )
         }
+
+        //DetailsScreen -> EntryScreen
         composable(
             route = MonthDetailsDestination.route,
         ) { backStackEntry ->
@@ -47,4 +61,6 @@ fun MonthNavHost(
             )
         }
     }
+
+    //DetailsScreen -> HomeScreen
 }
