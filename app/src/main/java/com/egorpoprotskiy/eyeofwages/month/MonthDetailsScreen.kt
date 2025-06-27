@@ -89,7 +89,7 @@ fun MonthDetailsScreen(
         }, modifier = modifier
     ) { innerPadding ->
         // Математические вычисления
-        val oneChasDenRub = if (uiState.norma != 0) data.oklad / data.norma else 0.0
+        val oneChasDenRub = if (uiState.norma != 0) data.oklad / data.norma else 0
         val oneChasNochRub = oneChasDenRub * 0.4
 
         val rabTime = data.rabTime * oneChasDenRub
