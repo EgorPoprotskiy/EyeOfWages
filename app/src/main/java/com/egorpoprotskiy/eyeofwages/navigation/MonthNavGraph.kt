@@ -39,12 +39,12 @@ fun MonthNavHost(
         composable(route = MonthEntryDestination.route) {
             backStackEntry ->
             val viewModel: MonthEntryViewModel = viewModel(backStackEntry)
-            MonthEntryScreen(
-                navigateToMonthDetails = { data ->
-                    viewModel.setData(data)
-                    navController.navigate(MonthDetailsDestination.route)
-                }
-            )
+//            MonthEntryScreen(
+//                navigateToMonthDetails = { data ->
+//                    viewModel.setData(data)
+//                    navController.navigate(MonthDetailsDestination.route)
+//                }
+//            )
         }
 
         //DetailsScreen -> EntryScreen
@@ -55,10 +55,10 @@ fun MonthNavHost(
                 navController.getBackStackEntry(MonthEntryDestination.route)
             }
             val viewModel: MonthEntryViewModel = viewModel(parentEntry)
-            MonthDetailsScreen(
-                viewModel = viewModel,
-                onNavigateUp = { navController.navigateUp() }
-            )
+//            MonthDetailsScreen(
+//                viewModel = viewModel,
+//                onNavigateUp = { navController.navigateUp() }
+//            )
         }
     }
 
