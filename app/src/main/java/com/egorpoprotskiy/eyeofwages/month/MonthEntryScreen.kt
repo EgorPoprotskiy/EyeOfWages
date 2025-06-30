@@ -63,7 +63,7 @@ object MonthEntryDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthEntryScreen(
-    navigateToMonthDetails: (Month) -> Unit,
+    navigateToMonthDetails: (Int) -> Unit,
 //    navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
@@ -91,7 +91,8 @@ fun MonthEntryScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.saveItem()
-                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.toItem())
+//                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.toItem())
+                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.id)
                 }
             },
             modifier = Modifier
@@ -144,37 +145,38 @@ fun MonthEntryText(
     ) {
         InputText(
             itemDetails.oklad,
-            onItemValueChange as (String) -> Unit,
+//            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(oklad = it))},
             stringResource(R.string.oklad)
         )
         InputText(
             itemDetails.norma,
-            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(norma = it))},
             stringResource(R.string.norma)
         )
         InputText(
             itemDetails.rabTime,
-            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(rabTime = it))},
             stringResource(R.string.rab_time_chas)
         )
         InputText(
             itemDetails.nochTime,
-            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(nochTime = it))},
             stringResource(R.string.noch_time_chas)
         )
         InputText(
             itemDetails.prazdTime,
-            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(prazdTime = it))},
             stringResource(R.string.prazd_time_chas)
         )
         InputText(
             itemDetails.prikaz,
-            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(prikaz = it))},
             stringResource(R.string.prikaz_chas)
         )
         InputText(
             itemDetails.premia,
-            onItemValueChange as (String) -> Unit,
+            onValueChange = {onItemValueChange(itemDetails.copy(premia = it))},
             stringResource(R.string.premia)
         )
         val vislugaOptions = listOf("0", "5", "10", "15")
