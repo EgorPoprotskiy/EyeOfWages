@@ -5,6 +5,8 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.egorpoprotskiy.eyeofwages.home.HomeViewModel
+import com.egorpoprotskiy.eyeofwages.month.MonthDetailsViewModel
 import com.egorpoprotskiy.eyeofwages.month.MonthEditViewModel
 import com.egorpoprotskiy.eyeofwages.month.MonthEntryViewModel
 
@@ -20,6 +22,16 @@ object AppViewModelProvider {
             MonthEntryViewModel(
                 monthApplication().container.monthRepository
             )
+        }
+        initializer {
+            MonthDetailsViewModel(
+                this.createSavedStateHandle(),
+                monthApplication().container.monthRepository
+            )
+        }
+        initializer {
+            HomeViewModel(
+                monthApplication().container.monthRepository)
         }
     }
 }

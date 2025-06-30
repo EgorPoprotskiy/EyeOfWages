@@ -76,7 +76,7 @@ object HomeDestination: NavigationDestination {
 fun HomeScreen(
     navigateToMonthEntry: () -> Unit,
     navigateToMonthUpdate: (Int) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     val homeUiSate by viewModel.homeUiState.collectAsState()
