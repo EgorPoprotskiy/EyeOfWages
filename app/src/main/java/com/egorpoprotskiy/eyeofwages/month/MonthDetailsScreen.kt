@@ -67,6 +67,7 @@ fun MonthDetailsScreen(
 //    viewModel: MonthEntryViewModel = viewModel()
     navigateToEditMonth: (Int) -> Unit,
     navigateBack: () -> Unit,
+    navigateToHomeScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MonthDetailsViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
@@ -83,21 +84,21 @@ fun MonthDetailsScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-//        floatingActionButton = {
-//            FloatingActionButton(
-//                onClick = { navigateToEditMonth(uiState.value.monthDetails.id)},
-//                shape = MaterialTheme.shapes.medium,
-//                modifier = Modifier.padding(
-//                    end = WindowInsets.safeDrawing.asPaddingValues()
-//                        .calculateEndPadding(LocalLayoutDirection.current)
-//                )
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.Edit,
-//                    contentDescription = stringResource(R.string.edit_raschet)
-//                )
-//            }
-//        }, modifier = modifier
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigateToEditMonth(uiState.value.monthDetails.id)},
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(
+                    end = WindowInsets.safeDrawing.asPaddingValues()
+                        .calculateEndPadding(LocalLayoutDirection.current)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.edit_raschet)
+                )
+            }
+        }, modifier = modifier
     ) { innerPadding ->
         MonthDetailsBody(
             monthDetailsUiState = uiState.value,
@@ -180,10 +181,17 @@ private fun MonthDetailsBody(
     monthDetailsUiState: MonthDetailsUiState,
     modifier: Modifier = Modifier
 ) {
-    MonthDetails(
-        month =  monthDetailsUiState.monthDetails.toItem(),
-        modifier = Modifier.fillMaxWidth()
-    )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.padding_medium)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+    ) {
+        MonthDetails(
+            month = monthDetailsUiState.monthDetails.toItem(),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
 @Composable
 fun MonthDetails(
@@ -299,8 +307,25 @@ fun round2(value: Double): Double =
     BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toDouble()
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun MonthDetailsScreenPreview() {
-//    MonthDetailsScreen(    )
+    MaterialTheme{
+        MonthDetailsBody(
+            MonthDetailsUiState(
+                outOfStock = true,
+                monthDetails = MonthDetails(
+                    id = 1,
+                    oklad = "50000.0",
+                    rabTime = "160.0",
+                    nochTime = "20.0",
+                    prikaz = "10.0",
+                    premia = "5.0",
+                    prazdTime = "8.0",
+                    norma = "160.0",
+                    visluga = "10.0",
+                    itog = "60000.0"
+                ))
+            )
+    }
 }

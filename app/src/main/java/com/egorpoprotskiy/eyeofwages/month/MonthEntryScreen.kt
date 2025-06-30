@@ -135,7 +135,7 @@ fun MonthEntryText(
     itemDetails: MonthDetails,
     modifier: Modifier = Modifier,
     onItemValueChange: (MonthDetails) -> Unit = {}
-){
+) {
     Column(
         modifier = modifier
             //отступы внутри Column
