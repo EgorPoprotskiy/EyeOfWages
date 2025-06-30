@@ -64,7 +64,7 @@ object MonthEntryDestination : NavigationDestination {
 @Composable
 fun MonthEntryScreen(
     navigateToMonthDetails: (Month) -> Unit,
-    navigateBack: () -> Unit,
+//    navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
     viewModel: MonthEntryViewModel = viewModel(factory = AppViewModelProvider.factory)

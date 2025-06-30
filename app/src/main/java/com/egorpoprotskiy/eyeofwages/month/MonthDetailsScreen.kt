@@ -61,13 +61,9 @@ object MonthDetailsDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthDetailsScreen(
-//    onNavigateUp: () -> Unit,
-//    modifier: Modifier = Modifier,
-//    canNavigateBack: Boolean = true,
-//    viewModel: MonthEntryViewModel = viewModel()
     navigateToEditMonth: (Int) -> Unit,
     navigateBack: () -> Unit,
-    navigateToHomeScreen: (Int) -> Unit,
+//    navigateToHomeScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MonthDetailsViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
