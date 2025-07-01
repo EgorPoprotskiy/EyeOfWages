@@ -64,6 +64,7 @@ import com.egorpoprotskiy.eyeofwages.R
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.data.monthCalculations
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.collections.set
@@ -83,6 +84,7 @@ fun HomeScreen(
 ) {
     val homeUiSate by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -109,8 +111,13 @@ fun HomeScreen(
         HomeBody(
             monthList = homeUiSate.monthList,
             onMonthClick = navigateToMonthUpdate,
-            onSwipeDelete = { month -> viewModel.deleteMonth(month) },
-            modifier = Modifier.padding(innerPadding),
+//            onSwipeDelete = { month -> viewModel.deleteMonth(month) },
+            onSwipeDelete = { month ->
+                coroutineScope.launch {
+                    viewModel.deleteMonth(month)
+            }
+                            },
+            modifier = Modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
     }
