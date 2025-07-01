@@ -306,7 +306,8 @@ fun MonthItem(
         ) {
             //Строка с месяцем и годом.
             Text(
-                text = "2024, МАЙ:",
+//                text = "2024, Апрель:",
+                text = "${month.yearName}, ${month.monthName}",
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
             )
             //Разделитель
@@ -329,6 +330,8 @@ fun MonthItem(
 fun MonthItemPreview() {
     val month = Month(
         id = 1,
+        "Апрель",
+        "2025",
         2.0,
         3,
         4,
@@ -346,8 +349,8 @@ fun MonthItemPreview() {
 @Composable
 fun MonthListPreview() {
     val fakeMonths = listOf(
-        Month(1,10000.0,160,160,0,0,10.0,5,12,10000.0),
-        Month(2,10000.0,160,160,0,0,10.0,5,12,20000.0)
+        Month(1,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,10000.0),
+        Month(2,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,20000.0)
     )
     MaterialTheme {
         MonthList(
@@ -363,8 +366,8 @@ fun MonthListPreview() {
 @Composable
 fun MonthBodyPreview() {
     val fakeMonths = listOf(
-        Month(1,10000.0,160,160,0,0,10.0,5,12,10000.0),
-        Month(2,10000.0,160,160,0,0,10.0,5,12,20000.0)
+        Month(1,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,10000.0),
+        Month(2,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,20000.0)
     )
     MaterialTheme {
         HomeBody(

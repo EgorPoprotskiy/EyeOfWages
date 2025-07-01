@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 //entities = [Month::class] — перечислены все таблицы (в данном случае одна: Month).
 //version = 1 — версия схемы базы данных (нужно увеличивать при изменении структуры таблиц).
 //exportSchema = false — не сохранять схему базы данных в файл (можно поставить true для отладки и тестов).
-@Database(entities = [Month::class], version = 1, exportSchema = false)
+@Database(entities = [Month::class], version = 3, exportSchema = false)
 abstract class MonthDatabase: RoomDatabase() {
     abstract fun monthDao(): MonthDao //метод, который сообщает Room, какой DAO интерфейс использовать.
 
@@ -26,6 +26,7 @@ abstract class MonthDatabase: RoomDatabase() {
                     MonthDatabase::class.java,
                     "month_database"
                 )
+                    .fallbackToDestructiveMigration()
                     .build()
                     //сохраняет созданный экземпляр в переменную instance.
                     .also { instance = it }

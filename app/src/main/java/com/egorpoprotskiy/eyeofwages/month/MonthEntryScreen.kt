@@ -3,10 +3,12 @@ package com.egorpoprotskiy.eyeofwages.month
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -144,9 +146,27 @@ fun MonthEntryText(
             .padding(10.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputYearAndMonth(
+                itemDetails.yearName,
+                onValueChange = { onItemValueChange(itemDetails.copy(yearName = it)) },
+                stringResource(R.string.yearName),
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            InputYearAndMonth(
+                itemDetails.monthName,
+                onValueChange = { onItemValueChange(itemDetails.copy(monthName = it)) },
+                stringResource(R.string.monthName),
+                modifier = Modifier.weight(1f)
+            )
+        }
         InputText(
             itemDetails.oklad,
-//            onItemValueChange as (String) -> Unit,
             onValueChange = {onItemValueChange(itemDetails.copy(oklad = it))},
             stringResource(R.string.oklad)
         )
@@ -213,7 +233,6 @@ fun InputText(
     value: String,
     onValueChange: (String) -> Unit = {},
     label: String
-
 ) {
     //9 Для фокуса и управления курсором в текстовом поле
     var textFieldValue by remember {
@@ -240,6 +259,43 @@ fun InputText(
             },
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+        )
+    )
+}
+
+@Composable
+fun InputYearAndMonth(
+    value: String,
+    onValueChange: (String) -> Unit = {},
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    //9 Для фокуса и управления курсором в текстовом поле
+    var textFieldValue by remember {
+        mutableStateOf(TextFieldValue(text = value))
+    }
+    var isFocused by remember { mutableStateOf(false) }
+    OutlinedTextField(
+        value = textFieldValue,
+        onValueChange = {
+                textFieldValue = it
+                onValueChange(it.text)
+        },
+        label = { Text(text = label) },
+        modifier = modifier
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused && !isFocused) {
+                    textFieldValue =
+                        textFieldValue.copy(selection = TextRange(0, textFieldValue.text.length))
+                }
+                isFocused = focusState.isFocused
+            },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface

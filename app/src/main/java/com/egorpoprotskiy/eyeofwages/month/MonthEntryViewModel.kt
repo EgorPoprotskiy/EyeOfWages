@@ -68,6 +68,8 @@ data class MonthUiState(
 
 data class MonthDetails(
     val id: Int = 0,
+    val monthName: String = "Введите месяц",
+    val yearName: String = "Введите год",
     val oklad: String = "0",
     val norma: String = "0",
     val rabTime: String = "0",
@@ -82,6 +84,8 @@ data class MonthDetails(
 
 fun MonthDetails.toItem(): Month = Month (
     id = id,
+    monthName = monthName.orEmpty() ?: "Апрель",
+    yearName = yearName.orEmpty() ?: "2025",
     oklad = oklad.toDoubleOrNull() ?: 0.0,
     norma = norma.toIntOrNull() ?: 0,
     rabTime = rabTime.toIntOrNull() ?: 0,

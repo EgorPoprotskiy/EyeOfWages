@@ -6,6 +6,8 @@
     <string name="detali_rascheta">детали расчета</string>
     <string name="edit_raschet">редактирование расчета</string>
 
+    <string name="monthName">Месяц</string>
+    <string name="yearName">Год</string>
     <string name="oklad">Оклад, руб.</string>
     <string name="norma">Норма, час.</string>
     <string name="rab_time_chas">Рабочее время, час.</string>
