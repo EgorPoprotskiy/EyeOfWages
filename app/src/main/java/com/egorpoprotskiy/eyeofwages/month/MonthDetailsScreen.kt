@@ -199,7 +199,7 @@ fun MonthDetails(
             HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.itog),
-                monthDetails = month.itog
+                monthDetails = calculated.itog
             )
         }
     }

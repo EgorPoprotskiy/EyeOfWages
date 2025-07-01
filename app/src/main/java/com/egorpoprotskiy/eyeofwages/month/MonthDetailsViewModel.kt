@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
-import com.egorpoprotskiy.eyeofwages.data.calculateMonthData
+import com.egorpoprotskiy.eyeofwages.data.monthCalculations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -48,7 +48,7 @@ class MonthDetailsViewModel (
         viewModelScope.launch {
             monthRepository.getMonthStream(monthId).filterNotNull().collect { month ->
                 _uiState.value = MonthDetailsUiState(monthDetails = month.toMonthDetails())
-                _calculateData.value = calculateMonthData(month)
+                _calculateData.value = monthCalculations(month)
             }
         }
     }

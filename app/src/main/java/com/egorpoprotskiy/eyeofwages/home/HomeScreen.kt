@@ -61,6 +61,8 @@ import com.egorpoprotskiy.eyeofwages.AppViewModelProvider
 import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.R
+import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
+import com.egorpoprotskiy.eyeofwages.data.monthCalculations
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -271,6 +273,7 @@ private fun MonthList(
                         dismissContent = {
                             MonthItem(
                                 month = item,
+                                calculated = monthCalculations(item),
                                 modifier = Modifier
                                     .padding(dimensionResource(id = R.dimen.padding_small))
                                     .clickable { onMonthClick(item) }
@@ -290,6 +293,7 @@ private fun MonthList(
 @Composable
 fun MonthItem(
     month: Month,
+    calculated: MonthCalculateData,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -318,7 +322,7 @@ fun MonthItem(
             )
             //Строка с итоговой выплатой.
             Text(
-                text = "${month.itog.toString()} руб.",
+                text = "${calculated.itog} руб.",
                 style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
             )
         }
@@ -342,7 +346,25 @@ fun MonthItemPreview() {
         9,
         15.0
     )
-    MonthItem(month = month)
+    val raschet = MonthCalculateData(
+        rabTimeRub = 1000.0,
+        nochTimeRub = 500.0,
+        prikazRub = 200.0,
+        premiaRub = 300.0,
+        prazdTimeRub = 100.0,
+        vislugaRub = 50.0,
+        rayon20 = 400.0,
+        severn30 = 600.0,
+        rayon10 = 200.0,
+        ndfl = 130.0,
+        itog = 1500.0
+    )
+    MonthItem(
+        month = month,
+        MonthCalculateData(
+            itog = raschet.itog,
+        )
+    )
 }
 
 @Preview(showBackground = true)

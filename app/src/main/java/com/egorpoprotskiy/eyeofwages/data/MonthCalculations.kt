@@ -3,7 +3,7 @@ package com.egorpoprotskiy.eyeofwages.data
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun calculateMonthData(month: Month): MonthCalculateData {
+fun monthCalculations(month: Month): MonthCalculateData {
     val oneChasDenRub = if (month.norma != 0) month.oklad / month.norma else 0.0
     val oneChasNochRub = oneChasDenRub * 0.4
 
