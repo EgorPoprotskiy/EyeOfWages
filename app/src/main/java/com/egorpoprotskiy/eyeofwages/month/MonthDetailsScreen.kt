@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.egorpoprotskiy.eyeofwages.AppViewModelProvider
 import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
+import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -69,6 +70,8 @@ fun MonthDetailsScreen(
 ) {
 //    val uiState = viewModel.uiState.collectAsState()
     val uiState = viewModel.uiState.collectAsState()
+    // 20
+    val calcState by viewModel.calculateData.collectAsState()
     val coroutineScope = rememberCoroutineScope()        //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -97,7 +100,9 @@ fun MonthDetailsScreen(
         }, modifier = modifier
     ) { innerPadding ->
         MonthDetailsBody(
-            monthDetailsUiState = uiState.value,
+//            monthDetailsUiState = uiState.value,
+            month = uiState.value.monthDetails.toItem(),
+            calculated = calcState,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -106,75 +111,14 @@ fun MonthDetailsScreen(
                 )
                 .verticalScroll(rememberScrollState())
         )
-        // Математические вычисления
-//        val oneChasDenRub = if (uiState.norma != 0) data.oklad / data.norma else 0.0
-//        val oneChasNochRub = oneChasDenRub * 0.4
-//
-//        val rabTime = data.rabTime * oneChasDenRub
-//        val nochTime = data.nochTime * oneChasNochRub
-//        val prikazNoch = data.prikaz * oneChasDenRub
-//
-//        val premia = (rabTime + nochTime + prikazNoch) * (data.premia / 100.0)
-//        val prazdTime = data.prazdTime * oneChasDenRub
-////        val vysluga = (rabTime + nochTime + prikazNoch + premia + prazdTime) * (data.visluga / 100.0)
-//        val vysluga = (data.oklad) * (data.visluga / 100.0)
-//
-//        val base = rabTime + nochTime + prikazNoch + premia + prazdTime + vysluga
-//
-//        val rayon20 = base * 0.2
-//        val severn30 = base * 0.3
-//        val rayon10 = base * 0.1
-//
-//        val itogBezNdfl = base + rayon20 + severn30 + rayon10
-//        val ndfl = itogBezNdfl * 0.13
-//        data.itog = itogBezNdfl - ndfl
-
-//        LazyColumn(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(innerPadding)
-//                .padding(10.dp)
-//                .background(MaterialTheme.colorScheme.background),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            item { MonthDetailsRow(stringResource(R.string.rab_time_rub), round2(rabTime)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.noch_time_rub), round2(nochTime)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.premia_rub), round2(premia)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.prazd_time_rub), round2(prazdTime)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.prikaz_rub), round2(prikazNoch)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.rayon_20), round2(rayon20)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.severn_30), round2(severn30)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.rayon_dop_10), round2(rayon10)) }
-//            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.visluga_rub), round2(vysluga)) }
-////            item { HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color) }
-////
-////            item { MonthDetailsRow(stringResource(R.string.otpusk_rub), round2(0.0)) }
-//            item { HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary) }
-//
-//            item { MonthDetailsRow(stringResource(R.string.itog), round2(data.itog)) }
-//        }
     }
 }
 
 @Composable
 private fun MonthDetailsBody(
-    monthDetailsUiState: MonthDetailsUiState,
+//    monthDetailsUiState: MonthDetailsUiState,
+    month: Month,
+    calculated: MonthCalculateData,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -184,7 +128,9 @@ private fun MonthDetailsBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
         MonthDetails(
-            month = monthDetailsUiState.monthDetails.toItem(),
+//            month = monthDetailsUiState.monthDetails.toItem(),
+            month = month,
+            calculated = calculated,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -192,6 +138,7 @@ private fun MonthDetailsBody(
 @Composable
 fun MonthDetails(
     month: Month,
+    calculated: MonthCalculateData,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -205,70 +152,49 @@ fun MonthDetails(
                 dimensionResource(R.dimen.padding_medium)
             )
         ) {
-            val oneChasDenRub = if (month.norma != 0) month.oklad / month.norma else 0.0
-            val oneChasNochRub = oneChasDenRub * 0.4
-
-            val rabTime = month.rabTime * oneChasDenRub
-            val nochTime = month.nochTime * oneChasNochRub
-            val prikazNoch = month.prikaz * oneChasDenRub
-
-            val premia = (rabTime + nochTime + prikazNoch) * (month.premia / 100.0)
-            val prazdTime = month.prazdTime * oneChasDenRub
-//        val vysluga = (rabTime + nochTime + prikazNoch + premia + prazdTime) * (data.visluga / 100.0)
-            val vysluga = (month.oklad) * (month.visluga / 100.0)
-
-            val base = rabTime + nochTime + prikazNoch + premia + prazdTime + vysluga
-
-            val rayon20 = base * 0.2
-            val severn30 = base * 0.3
-            val rayon10 = base * 0.1
-
-            val itogBezNdfl = base + rayon20 + severn30 + rayon10
-            val ndfl = itogBezNdfl * 0.13
-            month.itog = itogBezNdfl - ndfl
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.rab_time_rub),
-                monthDetails = rabTime
+                monthDetails = calculated.rabTimeRub
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.noch_time_rub),
-                monthDetails = nochTime
+                monthDetails = calculated.nochTimeRub
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.premia_rub),
-                monthDetails = premia
+                monthDetails = calculated.premiaRub
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.prazd_time_rub),
-                monthDetails = prazdTime
+                monthDetails = calculated.prazdTimeRub
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.prikaz_rub),
-                monthDetails = prikazNoch
+                monthDetails = calculated.prikazRub
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.rayon_20),
-                monthDetails = rayon20
+                monthDetails = calculated.rayon20
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.severn_30),
-                monthDetails = severn30
+                monthDetails = calculated.severn30
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.rayon_dop_10),
-                monthDetails = rayon10
+                monthDetails = calculated.rayon10
             )
             HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.visluga_rub),
-                monthDetails = round2(vysluga)
+                monthDetails = calculated.vislugaRub
             )
             HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary)
             MonthDetailsRow(
@@ -307,21 +233,21 @@ fun round2(value: Double): Double =
 @Composable
 fun MonthDetailsScreenPreview() {
     MaterialTheme{
-        MonthDetailsBody(
-            MonthDetailsUiState(
-                outOfStock = true,
-                monthDetails = MonthDetails(
-                    id = 1,
-                    oklad = "50000.0",
-                    rabTime = "160.0",
-                    nochTime = "20.0",
-                    prikaz = "10.0",
-                    premia = "5.0",
-                    prazdTime = "8.0",
-                    norma = "160.0",
-                    visluga = "10.0",
-                    itog = "60000.0"
-                ))
-            )
+//        MonthDetailsBody(
+//            MonthDetailsUiState(
+//                outOfStock = true,
+//                monthDetails = MonthDetails(
+//                    id = 1,
+//                    oklad = "50000.0",
+//                    rabTime = "160.0",
+//                    nochTime = "20.0",
+//                    prikaz = "10.0",
+//                    premia = "5.0",
+//                    prazdTime = "8.0",
+//                    norma = "160.0",
+//                    visluga = "10.0",
+//                    itog = "60000.0"
+//                ))
+//            )
     }
 }

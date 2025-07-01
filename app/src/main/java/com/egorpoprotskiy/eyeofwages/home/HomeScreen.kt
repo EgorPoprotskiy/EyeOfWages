@@ -306,7 +306,7 @@ fun MonthItem(
         ) {
             //Строка с месяцем и годом.
             Text(
-                text = "2024, Апрель:",
+                text = "2024, МАЙ:",
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
             )
             //Разделитель
