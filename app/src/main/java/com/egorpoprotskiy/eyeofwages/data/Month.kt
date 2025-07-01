@@ -8,6 +8,10 @@ import androidx.room.PrimaryKey
 data class Month (
     @PrimaryKey(autoGenerate = true) //автоинкрементный первичный ключ(autoGenerate = true — значение будет автоматически генерироваться Room)
     val id: Int = 0,
+    @ColumnInfo(name = "monthName")
+    val monthName: String,
+    @ColumnInfo(name = "yearName")
+    val yearName: String,
     @ColumnInfo(name = "oklad") //Столбцы таблицы в БД.
     val oklad: Double,
     @ColumnInfo(name = "norma")
