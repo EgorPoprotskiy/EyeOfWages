@@ -68,18 +68,18 @@ data class MonthUiState(
 
 data class MonthDetails(
     val id: Int = 0,
-    val monthName: String = "Введите месяц",
-    val yearName: String = "Введите год",
-    val oklad: String = "0",
-    val norma: String = "0",
-    val rabTime: String = "0",
-    val nochTime: String = "0",
-    val prazdTime: String = "0",
+    val monthName: String = "",
+    val yearName: String = "",
+    val oklad: String = "",
+    val norma: String = "",
+    val rabTime: String = "",
+    val nochTime: String = "",
+    val prazdTime: String = "",
     val premia: String = "40",
     var visluga: String = "0",
-    val prikazDen: String = "0",
-    val prikaz: String = "0",
-    val itog: String = "0"
+    val prikazDen: String = "",
+    val prikaz: String = "",
+    val itog: String = ""
 )
 
 fun MonthDetails.toItem(): Month = Month (

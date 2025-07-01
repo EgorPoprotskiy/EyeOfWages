@@ -226,7 +226,7 @@ private fun MonthList(
                             // Показываем Snackbar и ждём результата
                             val result = scope.launch {
                                 val snackbarResult = snackbarHostState.showSnackbar(
-                                    message = "Заметка удалена",
+                                    message = "УДАЛИТЬ?",
                                     actionLabel = "Отмена",
                                     duration = SnackbarDuration.Short
                                 )
