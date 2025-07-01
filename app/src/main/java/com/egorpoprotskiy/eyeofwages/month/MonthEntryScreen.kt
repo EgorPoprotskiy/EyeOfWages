@@ -63,7 +63,7 @@ object MonthEntryDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthEntryScreen(
-    navigateToMonthDetails: (Int) -> Unit,
+    navigateBack: () -> Unit,
 //    navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
@@ -92,7 +92,8 @@ fun MonthEntryScreen(
                 coroutineScope.launch {
                     viewModel.saveItem()
 //                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.toItem())
-                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.id)
+//                    navigateToHomeScreen(viewModel.monthUiState.itemDetails.id)
+                    navigateBack()
                 }
             },
             modifier = Modifier

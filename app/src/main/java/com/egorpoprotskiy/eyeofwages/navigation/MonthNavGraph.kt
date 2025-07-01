@@ -43,8 +43,9 @@ fun MonthNavHost(
         //EntryScreen -> DetailsScreen
         composable (route = MonthEntryDestination.route) {
             MonthEntryScreen(
-                onNavigateUp = {navController.popBackStack()},
-                navigateToMonthDetails = {navController.navigate("${MonthDetailsDestination.route}/${it}")}
+                onNavigateUp = {navController.navigateUp()},
+//                navigateToHomeScreen = {navController.navigate("${Month.route}/${it}")}
+                navigateBack = {navController.popBackStack()}
             )
         }
 
