@@ -88,6 +88,7 @@ fun MonthEntryScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth()
+
         )
     }
 }

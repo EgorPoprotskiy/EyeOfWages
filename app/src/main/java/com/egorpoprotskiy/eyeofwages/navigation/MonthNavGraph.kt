@@ -24,7 +24,6 @@ fun MonthNavHost(
 ) {
     NavHost(
         navController = navController,
-//        startDestination = MonthEntryDestination.route,
         startDestination = HomeDestination.route,
         modifier = modifier
     ) {
@@ -55,7 +54,6 @@ fun MonthNavHost(
             MonthDetailsScreen(
                 navigateToEditMonth = {navController.navigate("${MonthEditDestination.route}/$it")},
                 navigateBack = { navController.navigateUp() },
-                //Переход на Домашний экран
             )
         }
         composable(
