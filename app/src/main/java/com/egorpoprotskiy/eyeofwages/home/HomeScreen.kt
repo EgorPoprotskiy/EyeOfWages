@@ -64,7 +64,6 @@ import com.egorpoprotskiy.eyeofwages.R
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.data.monthCalculations
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.collections.set
