@@ -229,19 +229,21 @@ fun MonthDetailsScreenPreview() {
     MaterialTheme{
 //        MonthDetailsBody(
 //            MonthDetailsUiState(
-//                outOfStock = true,
-//                monthDetails = MonthDetails(
-//                    id = 1,
-//                    oklad = "50000.0",
-//                    rabTime = "160.0",
-//                    nochTime = "20.0",
-//                    prikaz = "10.0",
-//                    premia = "5.0",
-//                    prazdTime = "8.0",
-//                    norma = "160.0",
-//                    visluga = "10.0",
-//                    itog = "60000.0"
-//                ))
+//                monthDetails = MonthCalculateData(
+//                    name = "Месяц",
+//                    date = "01.01.2023",
+//                    rabTime = 160,
+//                    nochTime = 20,
+//                    premia = 5000.0,
+//                    prazdTime = 8,
+//                    prikaz = 1000.0,
+//                    rayon20 = 200.0,
+//                    severn30 = 300.0,
+//                    rayon10 = 150.0,
+//                    vislugaRub = 100.0,
+//                    itog = 1000.0
+//                )
 //            )
+//        )
     }
 }

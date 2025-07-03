@@ -11,7 +11,7 @@
     <string name="oklad">Оклад, руб.</string>
     <string name="norma">Норма, час.</string>
     <string name="rab_time_chas">Рабочее время, час.</string>
-    <string name="rab_time_rub">Рабочее время, руб.:</string>
+    <string name="rab_time_rub">Оклад, руб.:</string>
     <string name="noch_time_chas">Ночные, час.</string>
     <string name="noch_time_rub">Ночные, руб.:</string>
     <string name="prazd_time_chas">Праздничные, час.</string>
