@@ -33,4 +33,8 @@ interface MonthDao {
     @Query("SELECT * FROM Month ORDER BY yearName DESC, monthName DESC")
     //Получает все записи из таблицы Month, отсортированные по id.
     fun getAllMonths(): Flow<List<Month>>
+
+    //Запрос на последние 12 месяцев
+//    @Query("SELECT * FROM Month ORDER BY yearName DESC, monthName DESC LIMIT 12")
+//    suspend fun getlist12Month(): Flow<Double>
 }
