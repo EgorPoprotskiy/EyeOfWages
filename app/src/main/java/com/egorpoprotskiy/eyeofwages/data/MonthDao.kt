@@ -27,7 +27,10 @@ interface MonthDao {
     //Получает одну запись с конкретным id.
     fun getMonth(id: Int): Flow<Month?> //Flow<Month?> - можно слушать изменения в реальном времени
 
-    @Query("SELECT * FROM Month ORDER BY id ASC")
+    //сортировка по id.
+//    @Query("SELECT * FROM Month ORDER BY id ASC")
+    //сортировка по году и месяцу.
+    @Query("SELECT * FROM Month ORDER BY yearName DESC, monthName DESC")
     //Получает все записи из таблицы Month, отсортированные по id.
     fun getAllMonths(): Flow<List<Month>>
 }
