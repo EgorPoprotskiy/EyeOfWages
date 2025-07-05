@@ -28,37 +28,6 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
             monthRepository.insertMonth(monthUiState.itemDetails.toItem())
         }
     }
-//    var inputData by mutableStateOf<Month?>(null)
-//        private set
-//    fun setData(data: Month) {
-//        inputData = data
-//    }
-//
-//    var oklad by mutableStateOf("0")
-//    var norma by mutableStateOf("0")
-//    var rabTime by mutableStateOf("0")
-//    var nochTime by mutableStateOf("0")
-//    var prazdTime by mutableStateOf("0")
-//    var premia by mutableStateOf("40")
-//    var visluga by mutableStateOf("0")
-//    var prikazDen by mutableStateOf("0")
-//    var prikaz by mutableStateOf("0")
-//    var itog by mutableStateOf("0")
-//
-//    fun toMonth(): Month {
-//        return Month(
-//            oklad = oklad.toDoubleOrNull() ?: 0.0,
-//            norma = norma.toIntOrNull() ?: 0,
-//            rabTime = rabTime.toIntOrNull() ?: 0,
-//            nochTime = nochTime.toIntOrNull() ?: 0,
-//            prazdTime = prazdTime.toIntOrNull() ?: 0,
-//            premia = premia.toDoubleOrNull() ?: 0.0,
-//            visluga = visluga.toIntOrNull() ?: 0,
-////            prikazDen = prikazDen.toIntOrNull() ?: 0,
-//            prikaz = prikaz.toIntOrNull() ?: 0,
-//            itog = itog.toDoubleOrNull() ?: 0.0
-//        )
-//    }
 }
 
 data class MonthUiState(
@@ -104,18 +73,9 @@ fun Month.toItemUiState(isEntryValid: Boolean = false): MonthUiState = MonthUiSt
 )
 
 fun Month.toMonthDetails(): MonthDetails = MonthDetails(
-//    id = id,
-//    oklad = oklad.toString(),
-//    norma = norma.toString(),
-//    rabTime = rabTime.toString(),
-//    nochTime = nochTime.toString(),
-//    prazdTime = prazdTime.toString(),
-//    premia = premia.toString(),
-//    visluga = visluga.toString(),
-////    prikazDen = prikazDen.toString(),
-//    prikaz = prikaz.toString(),
-//    itog = itog.toString()
     id = id,
+    monthName = monthName.toString(),
+    yearName = yearName.toString(),
     oklad = oklad.toString(),
     norma = norma.toString(),
     rabTime = rabTime.toString(),
