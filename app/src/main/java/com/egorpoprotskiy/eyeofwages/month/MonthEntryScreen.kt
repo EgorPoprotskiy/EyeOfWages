@@ -243,11 +243,11 @@ fun InputText(
     }
     var isFocused by remember { mutableStateOf(false) }
     OutlinedTextField(
-        value = textFieldValue,
+        value = value,
         onValueChange = {
-            if (it.text.all { ch -> ch.isDigit() }) {
-                textFieldValue = it
-                onValueChange(it.text)
+            if (it.all { ch -> ch.isDigit() }) {
+//                textFieldValue = it
+                onValueChange(it)
             }
         },
         label = { Text(text = label) },
@@ -282,10 +282,10 @@ fun InputYearAndMonth(
     }
     var isFocused by remember { mutableStateOf(false) }
     OutlinedTextField(
-        value = textFieldValue,
+        value = value,
         onValueChange = {
-                textFieldValue = it
-                onValueChange(it.text)
+//                textFieldValue = it
+                onValueChange(it)
         },
         label = { Text(text = label) },
         modifier = modifier
