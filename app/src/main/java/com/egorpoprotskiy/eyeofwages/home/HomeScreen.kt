@@ -340,8 +340,8 @@ fun MonthItem(
 fun MonthItemPreview() {
     val month = Month(
         id = 1,
-        "Апрель",
-        "2025",
+        4,
+        2025,
         2.0,
         3,
         4,
@@ -377,8 +377,8 @@ fun MonthItemPreview() {
 @Composable
 fun MonthListPreview() {
     val fakeMonths = listOf(
-        Month(1,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,10000.0),
-        Month(2,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,20000.0)
+        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,10000.0),
+        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,20000.0)
     )
     MaterialTheme {
         MonthList(
@@ -394,8 +394,8 @@ fun MonthListPreview() {
 @Composable
 fun MonthBodyPreview() {
     val fakeMonths = listOf(
-        Month(1,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,10000.0),
-        Month(2,"Апрель","2025",10000.0,160,160,0,0,10.0,5,12,20000.0)
+        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,10000.0),
+        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,20000.0)
     )
     MaterialTheme {
         HomeBody(

@@ -53,8 +53,8 @@ data class MonthDetails(
 
 fun MonthDetails.toItem(): Month = Month (
     id = id,
-    monthName = monthName.orEmpty() ?: "Апрель",
-    yearName = yearName.orEmpty() ?: "2025",
+    monthName = monthName.toIntOrNull() ?: 1,
+    yearName = yearName.toIntOrNull() ?: 2025,
     oklad = oklad.toDoubleOrNull() ?: 0.0,
     norma = norma.toIntOrNull() ?: 0,
     rabTime = rabTime.toIntOrNull() ?: 0,

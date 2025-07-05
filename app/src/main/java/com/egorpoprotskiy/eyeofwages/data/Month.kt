@@ -9,9 +9,9 @@ data class Month (
     @PrimaryKey(autoGenerate = true) //автоинкрементный первичный ключ(autoGenerate = true — значение будет автоматически генерироваться Room)
     val id: Int = 0,
     @ColumnInfo(name = "monthName")
-    val monthName: String,
+    val monthName: Int,
     @ColumnInfo(name = "yearName")
-    val yearName: String,
+    val yearName: Int,
     @ColumnInfo(name = "oklad") //Столбцы таблицы в БД.
     val oklad: Double,
     @ColumnInfo(name = "norma")
