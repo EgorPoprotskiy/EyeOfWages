@@ -31,6 +31,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -53,9 +55,9 @@ object MonthEntryDestination : NavigationDestination {
 @Composable
 fun MonthEntryScreen(
     navigateBack: () -> Unit,
-//    navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
+    modifier: Modifier = Modifier,
     viewModel: MonthEntryViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
@@ -63,15 +65,16 @@ fun MonthEntryScreen(
     val coroutineScope = rememberCoroutineScope()
     //Scaffold для создания макета с верхней панелью(topBar)
     Scaffold(
-//        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MonthTopAppBar(
                 title = stringResource(MonthEntryDestination.titleRes),
                 canNavigateBack = canNavigateBack,
-                navigateUp = onNavigateUp
-//                scrollBehavior = scrollBehavior
+                navigateUp = onNavigateUp,
+                scrollBehavior = scrollBehavior
             )
-        }
+        },
+//        modifier = modifier
         //innerPadding - отступы, которые нужно применить к содержимому Scaffold
     ) { innerPadding ->
         MonthEntryBody(
@@ -80,14 +83,13 @@ fun MonthEntryScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.saveItem()
-//                    navigateToMonthDetails(viewModel.monthUiState.itemDetails.toItem())
-//                    navigateToHomeScreen(viewModel.monthUiState.itemDetails.id)
                     navigateBack()
                 }
             },
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth()
+//                .verticalScroll(rememberScrollState())
 
         )
     }
@@ -101,8 +103,9 @@ fun MonthEntryBody(
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large)),
-        modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
+        modifier = modifier.padding(dimensionResource(R.dimen.padding_medium)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large))
+
     ) {
         MonthEntryText(
             itemDetails = itemUiState.itemDetails,
