@@ -24,6 +24,25 @@ fun monthCalculations(month: Month): MonthCalculateData {
     val ndfl = itogBezNdfl * 0.13
     val itog = itogBezNdfl - ndfl
 
+//Сумма последних 12 месяцев
+//    val last12Months = ArrayDeque<Double>()
+//    if (last12Months.size >= 12) {
+//        last12Months.removeAt(0) //удаляется первый элемент, если их в списке >12
+//    }
+//    last12Months.add(itog) //Добавляет в список расчитанный итог
+//    val sredniyDenInMonth = 29.3 //среднее количество дней в месяце по законодательству РФ
+//    val sredniyLast12Months = last12Months.sum() / (12 * sredniyDenInMonth) //средний заработок за последние 12 месяцев
+//    val otpuskDen: Int = 1 // количество отпускных дней.
+//    val otpusk = sredniyLast12Months * otpuskDen // расчет отпуска
+
+
+    fun calculateVacation(last12Itogs: List<Double>, otpuskDen: Int): Double {
+        val sredniyDenInMonth = 29.3
+        val sredniy = last12Itogs.sum() / (12 * sredniyDenInMonth)
+        return round2(sredniy * otpuskDen)
+    }
+
+
     return MonthCalculateData(
         rabTimeRub = round2(rabTime),
         nochTimeRub = round2(nochTime),
