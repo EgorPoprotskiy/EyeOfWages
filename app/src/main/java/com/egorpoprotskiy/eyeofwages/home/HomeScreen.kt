@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
@@ -51,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,7 +93,7 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
+            androidx.compose.material3.FloatingActionButton(
                 onClick = navigateToMonthEntry,
                 shape = androidx.compose.material3.MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
@@ -110,7 +108,6 @@ fun HomeScreen(
         HomeBody(
             monthList = homeUiSate.monthList,
             onMonthClick = navigateToMonthUpdate,
-//            onSwipeDelete = { month -> viewModel.deleteMonth(month) },
             onSwipeDelete = { month ->
                 coroutineScope.launch {
                     viewModel.deleteMonth(month)
@@ -306,7 +303,7 @@ fun MonthItem(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         //назначение вцета для карточки, на основе выбранного цвета.
-        colors = CardDefaults.cardColors(containerColor = colorResource(R.color.teal_700))
+//        colors = CardDefaults.cardColors(containerColor = colorResource(R.color.teal_700))
     ) {
         Column(
             modifier = Modifier
@@ -322,7 +319,7 @@ fun MonthItem(
             )
             //Разделитель
             HorizontalDivider(
-                color = colorResource(R.color.teal_200),
+//                color = colorResource(R.color.teal_200),
                 thickness = 1.dp,
                 modifier = Modifier.padding(bottom = 10.dp)
             )

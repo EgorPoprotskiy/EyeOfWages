@@ -4,26 +4,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import com.egorpoprotskiy.eyeofwages.R
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.IconButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -32,12 +26,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -51,9 +46,6 @@ import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
-import java.math.BigDecimal
-import java.math.RoundingMode
-import kotlin.math.exp
 
 object MonthDetailsDestination : NavigationDestination {
     override val route = "month_details"
@@ -67,15 +59,13 @@ object MonthDetailsDestination : NavigationDestination {
 fun MonthDetailsScreen(
     navigateToEditMonth: (Int) -> Unit,
     navigateBack: () -> Unit,
-//    navigateToHomeScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MonthDetailsViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
-//    val uiState = viewModel.uiState.collectAsState()
     val uiState = viewModel.uiState.collectAsState()
     // 20
     val calcState by viewModel.calculateData.collectAsState()
-    val coroutineScope = rememberCoroutineScope()        //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
+//    val coroutineScope = rememberCoroutineScope()        //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
@@ -90,10 +80,7 @@ fun MonthDetailsScreen(
             FloatingActionButton(
                 onClick = { navigateToEditMonth(uiState.value.monthDetails.id)},
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(
-                    end = WindowInsets.safeDrawing.asPaddingValues()
-                        .calculateEndPadding(LocalLayoutDirection.current)
-                )
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -103,7 +90,6 @@ fun MonthDetailsScreen(
         }, modifier = modifier
     ) { innerPadding ->
         MonthDetailsBody(
-//            monthDetailsUiState = uiState.value,
             month = uiState.value.monthDetails.toItem(),
             calculated = calcState,
             modifier = Modifier
@@ -119,7 +105,6 @@ fun MonthDetailsScreen(
 
 @Composable
 private fun MonthDetailsBody(
-//    monthDetailsUiState: MonthDetailsUiState,
     month: Month,
     calculated: MonthCalculateData,
     modifier: Modifier = Modifier
@@ -131,7 +116,6 @@ private fun MonthDetailsBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
         MonthDetails(
-//            month = monthDetailsUiState.monthDetails.toItem(),
             month = month,
             calculated = calculated,
             modifier = Modifier.fillMaxWidth()
@@ -161,51 +145,50 @@ fun MonthDetails(
                 labelDetails = stringResource(R.string.rab_time_rub),
                 monthDetails = calculated.rabTimeRub
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.noch_time_rub),
                 monthDetails = calculated.nochTimeRub
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.premia_rub),
                 monthDetails = calculated.premiaRub
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.prazd_time_rub),
                 monthDetails = calculated.prazdTimeRub
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.prikaz_rub),
                 monthDetails = calculated.prikazRub
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.rayon_20),
                 monthDetails = calculated.rayon20
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.severn_30),
                 monthDetails = calculated.severn30
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.rayon_dop_10),
                 monthDetails = calculated.rayon10
             )
-            HorizontalDivider(thickness = 1.dp, color = DividerDefaults.color)
+            HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.visluga_rub),
                 monthDetails = calculated.vislugaRub
             )
-            HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary)
+            HorizontalDivider(thickness = 7.dp)
             Column (
                 modifier = Modifier
                     .fillMaxSize()
-//                    .padding(dimensionResource(R.dimen.padding_small)),
             ) {
                 MonthDetailsRow(
                     labelDetails = stringResource(R.string.itog),
@@ -276,11 +259,11 @@ private fun MonthItemButton(
     }
 }
 
-
+//Превью светлой темы
 @Preview(showBackground = true)
 @Composable
-fun MonthDetailsScreenPreview() {
-    MaterialTheme{
+fun MonthDetailsScreenLightPreview() {
+    MaterialTheme(colorScheme = lightColorScheme()){
         MonthDetailsBody(
             month = Month(
                 id = 1,
@@ -306,9 +289,42 @@ fun MonthDetailsScreenPreview() {
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
                 vislugaRub = 2000.0,
-                itog = 80000.0,
-//                aliments25 = null, // Для примера
-//                aliments75 = null // Для примера
+                itog = 80000.0
+            )
+        )
+    }
+}
+//Превью темной  темы
+@Preview(showBackground = true)
+@Composable
+fun MonthDetailsScreenDarkPreview() {
+    MaterialTheme(colorScheme = darkColorScheme()){
+        MonthDetailsBody(
+            month = Month(
+                id = 1,
+                monthName = 1,
+                yearName = 2023,
+                oklad = 50000.0,
+                norma = 160,
+                rabTime = 160,
+                nochTime = 0,
+                prazdTime = 0,
+                premia = 5000.0,
+                visluga = 0,
+                prikaz = 0,
+                itog = 55000.0
+            ),
+            calculated = MonthCalculateData(
+                rabTimeRub = 50000.0,
+                nochTimeRub = 0.0,
+                premiaRub = 5000.0,
+                prazdTimeRub = 0.0,
+                prikazRub = 0.0,
+                rayon20 = 10000.0,
+                severn30 = 15000.0,
+                rayon10 = 5000.0,
+                vislugaRub = 2000.0,
+                itog = 80000.0
             )
         )
     }

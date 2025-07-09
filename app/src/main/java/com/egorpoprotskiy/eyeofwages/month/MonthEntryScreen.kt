@@ -31,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -57,7 +56,6 @@ fun MonthEntryScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
-    modifier: Modifier = Modifier,
     viewModel: MonthEntryViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
@@ -73,8 +71,7 @@ fun MonthEntryScreen(
                 navigateUp = onNavigateUp,
                 scrollBehavior = scrollBehavior
             )
-        },
-//        modifier = modifier
+        }
         //innerPadding - отступы, которые нужно применить к содержимому Scaffold
     ) { innerPadding ->
         MonthEntryBody(
@@ -89,8 +86,6 @@ fun MonthEntryScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth()
-//                .verticalScroll(rememberScrollState())
-
         )
     }
 }
