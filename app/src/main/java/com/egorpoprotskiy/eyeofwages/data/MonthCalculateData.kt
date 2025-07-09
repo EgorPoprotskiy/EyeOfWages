@@ -11,5 +11,7 @@ data class MonthCalculateData(
     val severn30: Double = 0.0,
     val rayon10: Double = 0.0,
     val ndfl: Double = 0.0,
-    val itog: Double = 0.0
+    val itog: Double = 0.0,
+    val aliments25: Double = 0.0,
+    val aliments75: Double = 0.0,
 )
