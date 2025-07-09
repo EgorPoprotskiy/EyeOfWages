@@ -24,6 +24,9 @@ fun monthCalculations(month: Month): MonthCalculateData {
     val ndfl = itogBezNdfl * 0.13
     val itog = itogBezNdfl - ndfl
 
+    val aliments25 = itog * 0.25
+    val aliments75 = itog * 0.75
+
 //Сумма последних 12 месяцев
 //    val last12Months = ArrayDeque<Double>()
 //    if (last12Months.size >= 12) {
@@ -54,7 +57,9 @@ fun monthCalculations(month: Month): MonthCalculateData {
         severn30 = round2(severn30),
         rayon10 = round2(rayon10),
         ndfl = round2(ndfl),
-        itog = round2(itog)
+        itog = round2(itog),
+        aliments25 = round2(aliments25),
+        aliments75 = round2(aliments75)
     )
 }
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,8 +16,12 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +35,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -45,6 +53,7 @@ import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.exp
 
 object MonthDetailsDestination : NavigationDestination {
     override val route = "month_details"
@@ -135,6 +144,8 @@ fun MonthDetails(
     calculated: MonthCalculateData,
     modifier: Modifier = Modifier
 ) {
+    //переменная, которая хранит состояние expanded для кнопки свернуть/равернуть
+    var expanded by remember { mutableStateOf(false) }
     Card(
         modifier = modifier
     ) {
@@ -191,10 +202,39 @@ fun MonthDetails(
                 monthDetails = calculated.vislugaRub
             )
             HorizontalDivider(thickness = 10.dp, color = MaterialTheme.colorScheme.primary)
-            MonthDetailsRow(
-                labelDetails = stringResource(R.string.itog),
-                monthDetails = calculated.itog
-            )
+            Column (
+                modifier = Modifier
+                    .fillMaxSize()
+//                    .padding(dimensionResource(R.dimen.padding_small)),
+            ) {
+                MonthDetailsRow(
+                    labelDetails = stringResource(R.string.itog),
+                    monthDetails = calculated.itog
+                )
+                MonthItemButton(
+                    expanded = expanded,
+                    onClick = { expanded = !expanded }
+                )
+            }
+        }
+        if (expanded) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(R.dimen.padding_medium)),
+                verticalArrangement = Arrangement.spacedBy(
+                    dimensionResource(R.dimen.padding_medium)
+                )
+            ) {
+                MonthDetailsRow(
+                    labelDetails = stringResource(R.string.aliments25),
+                    monthDetails = calculated.aliments25
+                )
+                MonthDetailsRow(
+                    labelDetails = stringResource(R.string.aliments75),
+                    monthDetails = calculated.aliments75
+                )
+            }
         }
     }
 }
@@ -218,32 +258,58 @@ fun MonthDetailsRow(
     }
 }
 
-//Функция округления числа до 2 знаков после запятой
-fun round2(value: Double): Double =
-    BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toDouble()
+@Composable
+private fun MonthItemButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
 
 
 @Preview(showBackground = true)
 @Composable
 fun MonthDetailsScreenPreview() {
     MaterialTheme{
-//        MonthDetailsBody(
-//            MonthDetailsUiState(
-//                monthDetails = MonthCalculateData(
-//                    name = "Месяц",
-//                    date = "01.01.2023",
-//                    rabTime = 160,
-//                    nochTime = 20,
-//                    premia = 5000.0,
-//                    prazdTime = 8,
-//                    prikaz = 1000.0,
-//                    rayon20 = 200.0,
-//                    severn30 = 300.0,
-//                    rayon10 = 150.0,
-//                    vislugaRub = 100.0,
-//                    itog = 1000.0
-//                )
-//            )
-//        )
+        MonthDetailsBody(
+            month = Month(
+                id = 1,
+                monthName = 1,
+                yearName = 2023,
+                oklad = 50000.0,
+                norma = 160,
+                rabTime = 160,
+                nochTime = 0,
+                prazdTime = 0,
+                premia = 5000.0,
+                visluga = 0,
+                prikaz = 0,
+                itog = 55000.0
+            ),
+            calculated = MonthCalculateData(
+                rabTimeRub = 50000.0,
+                nochTimeRub = 0.0,
+                premiaRub = 5000.0,
+                prazdTimeRub = 0.0,
+                prikazRub = 0.0,
+                rayon20 = 10000.0,
+                severn30 = 15000.0,
+                rayon10 = 5000.0,
+                vislugaRub = 2000.0,
+                itog = 80000.0,
+//                aliments25 = null, // Для примера
+//                aliments75 = null // Для примера
+            )
+        )
     }
 }

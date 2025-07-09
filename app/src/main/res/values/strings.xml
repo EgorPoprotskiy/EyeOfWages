@@ -32,5 +32,7 @@
     <string name="rayon_20">Районный коэффициент(20%), руб.:</string>
     <string name="severn_30">Северный коэффициент(30%), руб.:</string>
     <string name="rayon_dop_10">Районный коэффициент(доп)(10%), руб.:</string>
+    <string name="aliments25">25%, руб.:</string>
+    <string name="aliments75">75%, руб.:</string>
 
 </resources>
