@@ -26,7 +26,7 @@ abstract class MonthDatabase: RoomDatabase() {
                     MonthDatabase::class.java,
                     "month_database"
                 )
-                    .fallbackToDestructiveMigration()
+//                    .fallbackToDestructiveMigration() // Удаляет данные в приложении при изменении схемы БД.
                     .build()
                     //сохраняет созданный экземпляр в переменную instance.
                     .also { instance = it }

@@ -14,4 +14,6 @@ class OfflineMonthRepository(private val monthDao: MonthDao) : MonthRepository {
     override suspend fun deleteMonth(month: Month) { monthDao.delete(month) }
     //Асинхронные методы — просто проксируют вызовы к DAO.
     override suspend fun updateMonth(month: Month) { monthDao.update(month) }
+    //35 получение последнего сохраненного элемента.
+    override suspend fun getLastMonth(): Flow<Month?> = monthDao.getLastMonth()
 }
