@@ -9,18 +9,25 @@ fun monthCalculations(month: Month): MonthCalculateData {
 
     val rabTime = month.rabTime * oneChasDenRub
     val nochTime = month.nochTime * oneChasNochRub
-    val prikazNoch = month.prikazNoch * oneChasDenRub
-    val premia = (rabTime + nochTime + prikazNoch) * (month.premia / 100.0)
+    //расчет ночного приказа
+    val prikazNochBezDv =
+        (month.prikazNoch * oneChasDenRub + month.prikazNoch * oneChasNochRub) + (month.prikazNoch * oneChasDenRub) +
+                ((month.prikazNoch * oneChasDenRub + month.prikazNoch * oneChasNochRub) * 0.4)
+    val prikazNochDv = (prikazNochBezDv * 0.1 + prikazNochBezDv * 0.2 + prikazNochBezDv * 0.3)
+    val prikazNoch = prikazNochBezDv + prikazNochDv
+//    val prikazNoch = month.prikazNoch * oneChasDenRub
+
+    val premia = (rabTime + nochTime) * (month.premia / 100.0)
     val prazdTime = month.prazdTime * oneChasDenRub
     val visluga = rabTime * (month.visluga / 100.0)
 
-    val base = rabTime + nochTime + prikazNoch + premia + prazdTime + visluga
+    val base = rabTime + nochTime + premia + prazdTime + visluga
 
     val rayon20 = base * 0.2
     val severn30 = base * 0.3
     val rayon10 = base * 0.1
 
-    val itogBezNdfl = base + rayon20 + severn30 + rayon10
+    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch
     val ndfl = itogBezNdfl * 0.13
     val itog = itogBezNdfl - ndfl
 
