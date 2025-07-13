@@ -4,13 +4,41 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
         private set
 
+    //35
+    init {
+        viewModelScope.launch {
+            // Пытаемся получить последнюю запись из БД
+            val lastMonthEntry = monthRepository.getLastMonth().first() // Используем first() чтобы получить одно значение и завершить Flow
+            lastMonthEntry?.let { month ->
+                monthUiState = monthUiState.copy(
+                    itemDetails = MonthDetails(
+                        monthName = (month.monthName+1).toString(),
+                        yearName = month.yearName.toString(),
+                        oklad = month.oklad.toString(),
+//                        norma = month.norma.toString(),
+//                        rabTime = month.rabTime.toString(),
+//                        nochTime = month.nochTime.toString(),
+//                        prazdTime = month.prazdTime.toString(),
+                        premia = month.premia.toString(),
+                        visluga = month.visluga.toString(),
+//                        prikazDen = month.prikazDen.toString(),
+//                        prikazNoch = month.prikazNoch.toString(),
+//                        itog = month.itog.toString()
+                    )
+                )
+            }
+        }
+    }
     fun updateUiState(itemDetails: MonthDetails) {
         monthUiState =
             MonthUiState(

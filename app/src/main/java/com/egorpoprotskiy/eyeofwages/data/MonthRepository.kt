@@ -27,6 +27,9 @@ interface MonthRepository {
     suspend fun deleteMonth(month: Month)
     //Обновляет уже существующую запись.
     suspend fun updateMonth(month: Month)
+
+    suspend fun getLastMonth(): Flow<Month?>
+
 //    //Возвращает список из последних 12 месяцев.
 //    suspend fun getlist12Month(): Flow<List<Month>>
 }
