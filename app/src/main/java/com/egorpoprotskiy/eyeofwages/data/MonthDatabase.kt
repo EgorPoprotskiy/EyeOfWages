@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 //entities = [Month::class] — перечислены все таблицы (в данном случае одна: Month).
 //version = 1 — версия схемы базы данных (нужно увеличивать при изменении структуры таблиц).
@@ -26,11 +28,29 @@ abstract class MonthDatabase: RoomDatabase() {
                     MonthDatabase::class.java,
                     "month_database"
                 )
-//                    .fallbackToDestructiveMigration() // Удаляет данные в приложении при изменении схемы БД.
+                    /* Удаляет данные в приложении при изменении схемы БД.
+                    Нужна только на этапе разработки.
+   *********************В проде эту опцию надо ОБЯЗАТЕЛЬНО ОТКЛЮЧАТЬ!!!
+                     */
+                    .fallbackToDestructiveMigration()
+//!!!!!!!                    .addMigrations(MIGRATION_5_6)
                     .build()
                     //сохраняет созданный экземпляр в переменную instance.
                     .also { instance = it }
             }
         }
+    }
+}
+
+// Создай этот объект где-нибудь, где он будет доступен, например, в том же файле MonthDatabase.kt
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        // SQL-запрос для добавления нового столбца
+        // ALTER TABLE month ADD COLUMN "notes" "TEXT" NOT NULL DEFAULT '';
+        //notes  - новое поле в БД.
+        // TEXT - тип данных для String в SQLite
+        // NOT NULL - потому что в Kotlin поле String не может быть null
+        // DEFAULT '' - значение по умолчанию для существующих записей
+        database.execSQL("ALTER TABLE month ADD COLUMN notes TEXT NOT NULL DEFAULT ''")
     }
 }
