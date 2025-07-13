@@ -26,8 +26,8 @@ data class Month (
     val premia: Double,
     @ColumnInfo(name = "visluga")
     val visluga: Int,
-//    @ColumnInfo(name = "prikazDen")
-//    val prikazDen: Int,
+    @ColumnInfo(name = "prikazDen")
+    val prikazDen: Int,
     @ColumnInfo(name = "prikaz")
     val prikazNoch: Int,
     @ColumnInfo(name = "itog")

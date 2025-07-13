@@ -177,6 +177,11 @@ fun MonthEntryText(
             stringResource(R.string.prazd_time_chas)
         )
         InputText(
+            itemDetails.prikazDen,
+            onValueChange = {onItemValueChange(itemDetails.copy(prikazDen = it))},
+            stringResource(R.string.prikaz_den)
+        )
+        InputText(
             itemDetails.prikazNoch,
             onValueChange = {onItemValueChange(itemDetails.copy(prikazNoch = it))},
             stringResource(R.string.prikaz_noch)
@@ -320,6 +325,7 @@ fun MonthEntreScreenPreview() {
                     prazdTime = "0",
                     premia = "40",
                     visluga = "0",
+                    prikazDen = "0",
                     prikazNoch = "0",
                     itog = "10000" // Возможно, itog здесь не нужен для ввода, если он вычисляется
                 )

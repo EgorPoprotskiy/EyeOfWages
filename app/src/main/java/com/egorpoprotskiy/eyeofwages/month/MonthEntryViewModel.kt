@@ -62,7 +62,7 @@ fun MonthDetails.toItem(): Month = Month (
     prazdTime = prazdTime.toIntOrNull() ?: 0,
     premia = premia.toDoubleOrNull() ?: 0.0,
     visluga = visluga.toIntOrNull() ?: 0,
-//    prikazDen = prikazDen.toIntOrNull() ?: 0,
+    prikazDen = prikazDen.toIntOrNull() ?: 0,
     prikazNoch = prikazNoch.toIntOrNull() ?: 0,
     itog = itog.toDoubleOrNull() ?: 0.0
 )
@@ -83,7 +83,7 @@ fun Month.toMonthDetails(): MonthDetails = MonthDetails(
     prazdTime = prazdTime.toString(),
     premia = premia.toString(),
     visluga = visluga.toString(),
-//    prikazDen = prikazDen.toString(),
+    prikazDen = prikazDen.toString(),
     prikazNoch = prikazNoch.toString(),
     itog = itog.toString()
 )
