@@ -21,7 +21,8 @@
     <string name="visluga_let">Выслуга, лет.</string>
     <string name="visluga_rub">Выслуга, руб.:</string>
     <string name="prikaz_chas">Приказ, час.</string>
-    <string name="prikaz_rub">Приказ, руб.:</string>
+    <string name="prikaz_den_rub">Приказ на день, руб.:</string>
+    <string name="prikaz_noch_rub">Приказ на ночь, руб.:</string>
     <string name="prikaz_den">Приказ на день, час.</string>
     <string name="prikaz_noch">Приказ на ночь, час.</string>
     <string name="prikaz">Приказ, час.</string>

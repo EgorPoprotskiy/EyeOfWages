@@ -352,7 +352,7 @@ fun MonthItemPreview() {
     val raschet = MonthCalculateData(
         rabTimeRub = 1000.0,
         nochTimeRub = 500.0,
-        prikazRub = 200.0,
+        prikazNochRub = 200.0,
         premiaRub = 300.0,
         prazdTimeRub = 100.0,
         vislugaRub = 50.0,

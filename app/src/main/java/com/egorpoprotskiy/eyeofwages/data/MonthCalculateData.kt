@@ -3,7 +3,7 @@ package com.egorpoprotskiy.eyeofwages.data
 data class MonthCalculateData(
     val rabTimeRub: Double = 0.0,
     val nochTimeRub: Double = 0.0,
-    val prikazRub: Double = 0.0,
+    val prikazNochRub: Double = 0.0,
     val premiaRub: Double = 0.0,
     val prazdTimeRub: Double = 0.0,
     val vislugaRub: Double = 0.0,
