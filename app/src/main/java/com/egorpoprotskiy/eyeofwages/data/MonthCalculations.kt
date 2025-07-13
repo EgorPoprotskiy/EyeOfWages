@@ -17,6 +17,13 @@ fun monthCalculations(month: Month): MonthCalculateData {
     val prikazNoch = prikazNochBezDv + prikazNochDv
 //    val prikazNoch = month.prikazNoch * oneChasDenRub
 
+    //Расчет дневного приказа
+    val prikazDenBezDv =
+        (month.prikazDen * oneChasDenRub + month.prikazDen * oneChasDenRub) +
+                (month.prikazDen * oneChasDenRub * 0.4)
+    val prikazDenDv = (prikazDenBezDv * 0.1 + prikazDenBezDv * 0.2 + prikazDenBezDv * 0.3)
+    val prikazDen = prikazDenBezDv + prikazDenDv
+
     val premia = (rabTime + nochTime) * (month.premia / 100.0)
     val prazdTime = month.prazdTime * oneChasDenRub
     val visluga = rabTime * (month.visluga / 100.0)
@@ -27,7 +34,7 @@ fun monthCalculations(month: Month): MonthCalculateData {
     val severn30 = base * 0.3
     val rayon10 = base * 0.1
 
-    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch
+    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen
     val ndfl = itogBezNdfl * 0.13
     val itog = itogBezNdfl - ndfl
 
@@ -56,6 +63,7 @@ fun monthCalculations(month: Month): MonthCalculateData {
     return MonthCalculateData(
         rabTimeRub = round2(rabTime),
         nochTimeRub = round2(nochTime),
+        prikazDenRub = round2(prikazDen),
         prikazNochRub = round2(prikazNoch),
         premiaRub = round2(premia),
         prazdTimeRub = round2(prazdTime),
