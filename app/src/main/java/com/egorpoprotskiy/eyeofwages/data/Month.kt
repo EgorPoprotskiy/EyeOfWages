@@ -29,7 +29,7 @@ data class Month (
 //    @ColumnInfo(name = "prikazDen")
 //    val prikazDen: Int,
     @ColumnInfo(name = "prikaz")
-    val prikaz: Int,
+    val prikazNoch: Int,
     @ColumnInfo(name = "itog")
     var itog: Double
 )

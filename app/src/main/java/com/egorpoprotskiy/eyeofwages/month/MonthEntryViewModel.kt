@@ -47,7 +47,7 @@ data class MonthDetails(
     val premia: String = "40",
     var visluga: String = "0",
     val prikazDen: String = "",
-    val prikaz: String = "",
+    val prikazNoch: String = "",
     val itog: String = ""
 )
 
@@ -63,7 +63,7 @@ fun MonthDetails.toItem(): Month = Month (
     premia = premia.toDoubleOrNull() ?: 0.0,
     visluga = visluga.toIntOrNull() ?: 0,
 //    prikazDen = prikazDen.toIntOrNull() ?: 0,
-    prikaz = prikaz.toIntOrNull() ?: 0,
+    prikazNoch = prikazNoch.toIntOrNull() ?: 0,
     itog = itog.toDoubleOrNull() ?: 0.0
 )
 
@@ -84,6 +84,6 @@ fun Month.toMonthDetails(): MonthDetails = MonthDetails(
     premia = premia.toString(),
     visluga = visluga.toString(),
 //    prikazDen = prikazDen.toString(),
-    prikaz = prikaz.toString(),
+    prikazNoch = prikazNoch.toString(),
     itog = itog.toString()
 )

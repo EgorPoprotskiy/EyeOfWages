@@ -162,8 +162,8 @@ fun MonthDetails(
             )
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
-                labelDetails = stringResource(R.string.prikaz_rub),
-                monthDetails = calculated.prikazRub
+                labelDetails = stringResource(R.string.prikaz_noch_rub),
+                monthDetails = calculated.prikazNochRub
             )
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
@@ -276,7 +276,7 @@ fun MonthDetailsScreenLightPreview() {
                 prazdTime = 0,
                 premia = 5000.0,
                 visluga = 0,
-                prikaz = 0,
+                prikazNoch = 0,
                 itog = 55000.0
             ),
             calculated = MonthCalculateData(
@@ -284,7 +284,7 @@ fun MonthDetailsScreenLightPreview() {
                 nochTimeRub = 0.0,
                 premiaRub = 5000.0,
                 prazdTimeRub = 0.0,
-                prikazRub = 0.0,
+                prikazNochRub = 0.0,
                 rayon20 = 10000.0,
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
@@ -311,7 +311,7 @@ fun MonthDetailsScreenDarkPreview() {
                 prazdTime = 0,
                 premia = 5000.0,
                 visluga = 0,
-                prikaz = 0,
+                prikazNoch = 0,
                 itog = 55000.0
             ),
             calculated = MonthCalculateData(
@@ -319,7 +319,7 @@ fun MonthDetailsScreenDarkPreview() {
                 nochTimeRub = 0.0,
                 premiaRub = 5000.0,
                 prazdTimeRub = 0.0,
-                prikazRub = 0.0,
+                prikazNochRub = 0.0,
                 rayon20 = 10000.0,
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
