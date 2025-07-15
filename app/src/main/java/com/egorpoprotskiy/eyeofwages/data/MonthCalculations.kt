@@ -26,7 +26,9 @@ fun monthCalculations(month: Month): MonthCalculateData {
 
     val premia = (rabTime + nochTime) * (month.premia / 100.0)
     val prazdTime = month.prazdTime * oneChasDenRub
-    val visluga = rabTime * (month.visluga / 100.0)
+
+    //Расчет выслуги лет
+    val visluga = (rabTime + (month.prikazDen * oneChasDenRub) + (month.prikazNoch * oneChasDenRub)) * (month.visluga / 100.0)
 
     val base = rabTime + nochTime + premia + prazdTime + visluga
 
