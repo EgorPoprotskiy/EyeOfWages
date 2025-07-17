@@ -34,16 +34,16 @@ fun MonthEditScreen(
     onNavigateUP: () -> Unit,
     viewModel: MonthEditViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+//    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MonthTopAppBar(
                 title = stringResource(MonthEditDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = onNavigateUP,
-                scrollBehavior = scrollBehavior
+//                scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->

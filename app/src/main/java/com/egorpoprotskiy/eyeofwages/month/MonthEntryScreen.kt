@@ -59,17 +59,17 @@ fun MonthEntryScreen(
     viewModel: MonthEntryViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+//    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
     //Scaffold для создания макета с верхней панелью(topBar)
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MonthTopAppBar(
                 title = stringResource(MonthEntryDestination.titleRes),
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp,
-                scrollBehavior = scrollBehavior
+//                scrollBehavior = scrollBehavior
             )
         }
         //innerPadding - отступы, которые нужно применить к содержимому Scaffold
@@ -97,8 +97,11 @@ fun MonthEntryBody(
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
     Column(
-        modifier = modifier.padding(dimensionResource(R.dimen.padding_medium)),
+        modifier = modifier
+            .padding(dimensionResource(R.dimen.padding_medium))
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large))
 
     ) {
@@ -130,7 +133,6 @@ fun MonthEntryText(
         modifier = modifier
             //отступы внутри Column
             .padding(10.dp)
-            .verticalScroll(rememberScrollState())
     ) {
         Row(
             modifier = Modifier
