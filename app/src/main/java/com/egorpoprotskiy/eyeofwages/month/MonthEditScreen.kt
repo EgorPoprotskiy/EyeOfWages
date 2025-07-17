@@ -63,7 +63,6 @@ fun MonthEditScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun MonthEditScreenPreview() {
