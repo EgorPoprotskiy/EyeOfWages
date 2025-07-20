@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     //Room
     alias(libs.plugins.ksp)
+
+    //3.1 Плагин для сериализации(преобразует JSON-строку в объект Kotlin)
+    kotlin("plugin.serialization") version "2.1.20"
+
 }
 
 android {
@@ -77,4 +81,12 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+    // Retrofit2 - Обновленная версия библиотеки Retrofit
+    implementation(libs.retrofit)
+    //3.2 Для работы Retrofit и сериализации.
+    implementation(libs.retrofit.serialization)
+    implementation(libs.okhttp)
+    // 3.3 Зависимость для сериализации(преобразует JSON-строку в объект Kotlin)
+    implementation(libs.kotlinx.serialization.json)
+
 }
