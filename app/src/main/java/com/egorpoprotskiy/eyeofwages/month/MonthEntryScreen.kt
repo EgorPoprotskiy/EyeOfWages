@@ -207,7 +207,7 @@ fun MonthEntryText(
                 vislugaOptions.forEach { text ->
 //                    Row(
 //                        modifier = Modifier.weight(1f),
-//                        verticalAlignment = Alignment.CenterVertically
+//                        verticalAlignment = Alignment.CenterVerticallyУ меня есть экран ввода данных, сейчас я тебе его предоставлю..
 //                    ) {
 //                        RadioButton(
 //                            selected = (text == itemDetails.visluga),
