@@ -81,12 +81,25 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-    // Retrofit2 - Обновленная версия библиотеки Retrofit
-    implementation(libs.retrofit)
-    //3.2 Для работы Retrofit и сериализации.
-    implementation(libs.retrofit.serialization)
-    implementation(libs.okhttp)
-    // 3.3 Зависимость для сериализации(преобразует JSON-строку в объект Kotlin)
-    implementation(libs.kotlinx.serialization.json)
+//    // Retrofit2 - Обновленная версия библиотеки Retrofit
+//    implementation(libs.retrofit)
+//    //3.2 Для работы Retrofit и сериализации.
+//    implementation(libs.retrofit.serialization)
+//    implementation(libs.okhttp)
+//    // 3.3 Зависимость для сериализации(преобразует JSON-строку в объект Kotlin)
+//    implementation(libs.kotlinx.serialization.json)
+
+    // Если ты используешь бандл:
+    implementation(libs.bundles.network.deps)
+
+    // Или если ты добавляешь по одной:
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.scalars)
+    implementation(platform(libs.okhttp.bom)) // Важно для BOM
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.jsoup)
+
+    // Если ты добавил okhttp-bom, то тебе также понадобится обычный okhttp, но его версия будет управляться BOM
+    implementation("com.squareup.okhttp3:okhttp") // Добавь, если Retrofit не тянет его транзитивно, или если нужен базовый OkHttp
 
 }
