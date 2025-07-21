@@ -9,13 +9,9 @@ import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import androidx.lifecycle.viewModelScope
 import com.egorpoprotskiy.eyeofwages.network.CalendarApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.first
 
 class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
