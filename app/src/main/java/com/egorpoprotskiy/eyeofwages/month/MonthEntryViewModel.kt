@@ -9,11 +9,20 @@ import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import androidx.lifecycle.viewModelScope
+import com.egorpoprotskiy.eyeofwages.network.CalendarApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 
 class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
         private set
 
+    private val _yearInput = MutableStateFlow("")
+    private val _monthInput = MutableStateFlow("")
     //35
     init {
         viewModelScope.launch {
@@ -38,6 +47,21 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
                 )
             }
         }
+
+        viewModelScope.launch {
+            combine(_yearInput, _monthInput) { year, month ->
+                Pair(year, month)
+            }.collect { (year, month) ->
+                val yearInt = year.toIntOrNull()
+                val monthInt = month.toIntOrNull()
+
+                if (yearInt != null && monthInt != null && yearInt in 1900..2100 && monthInt in 1..12) {
+                    fetchNorma(yearInt, monthInt)
+                } else if (monthUiState.itemDetails.norma.isNotBlank()) {
+                    updateUiState(monthUiState.itemDetails.copy(norma = ""))
+                }
+            }
+        }
     }
     fun updateUiState(itemDetails: MonthDetails) {
         monthUiState =
@@ -45,6 +69,38 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
                 itemDetails = itemDetails,
                 isEntryValid = validateInput(itemDetails)
             )
+        if (_yearInput.value != itemDetails.yearName) {
+            _yearInput.value = itemDetails.yearName
+        }
+        if (_monthInput.value != itemDetails.monthName) {
+            _monthInput.value = itemDetails.monthName
+        }
+    }
+
+    private suspend fun fetchNorma(year: Int, month: Int) {
+        try {
+            val response = CalendarApi.retrofitService.getMonthCalendarData(year, month)
+            if (response.isSuccessful) {
+                val calendarResponse = response.body()
+                calendarResponse?.let {
+                    // Используем workHours
+                    val parsedNorma = it.month.workingHours.toString() // Или it.calculationInfo?.norma?.replace(" часов", "")
+
+                    if (!parsedNorma.isNullOrBlank()) {
+                        updateUiState(monthUiState.itemDetails.copy(norma = parsedNorma))
+                    } else {
+                        updateUiState(monthUiState.itemDetails.copy(norma = ""))
+                        println("Норма не найдена в ответе API.")
+                    }
+                }
+            } else {
+                updateUiState(monthUiState.itemDetails.copy(norma = ""))
+                println("Error fetching norma: ${response.code()} - ${response.message()}")
+            }
+        } catch (e: Exception) {
+            updateUiState(monthUiState.itemDetails.copy(norma = ""))
+            println("Exception fetching norma: ${e.message}")
+        }
     }
 
     private fun validateInput(uiState: MonthDetails = monthUiState.itemDetails): Boolean {
