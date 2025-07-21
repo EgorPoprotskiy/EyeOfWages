@@ -18,11 +18,12 @@ room = "2.7.2"
 composeMaterial = "1.8.3"
 ksp = "2.1.21-2.0.1"
 
+# ... твои существующие версии
+retrofit = "2.9.0"
+okhttp = "4.12.0"
+gson = "2.10.1" # Версия библиотеки Gson
+retrofit-gson = "2.9.0" # Версия Gson конвертера для Retrofit
 
-retrofit = "3.0.0"
-okhttp = "5.1.0" # OkHttp часто идет вместе с Retrofit, Retrofit использует его для запросов
-retrofit-scalars = "3.0.0" # Для String конвертера Retrofit
-jsoup = "1.21.1" # Для парсинга HTML
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,16 +56,12 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 
 # Retrofit и OkHttp
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "retrofit-scalars" }
-# OkHttp нужен для работы Retrofit. Часто он уже импортируется транзитивно,
-# но лучше явно добавить, если есть специфичные требования.
-okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" } # BOM для управления версиями OkHttp
+retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit-gson" } # Новый Gson конвертер
+okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
-# Jsoup для парсинга HTML
-jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 [bundles]
 # ... твои существующие бандлы (если есть)
-network-deps = ["retrofit-core", "retrofit-scalars", "okhttp-logging-interceptor"] # Опционально: группировка
+network-deps = ["retrofit-core", "retrofit-gson", "okhttp-logging-interceptor"] # Обновили бандл
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
