@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,6 +38,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +48,8 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -182,22 +186,60 @@ private fun MonthList(
             items(items = monthList, key = { it.id }) { item ->
                 val visible = visibleMap[item.id] ?: true
                 //9 Защита от повторного свайпа при настройках анимации.
-                val alreadyDismissed = remember { mutableStateOf(false) }
+//                val alreadyDismissed = remember { mutableStateOf(false) }
+
+                // 42 Переменная для состояния диалога подтверждения удаления(по-умолчанию false).
+                var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
+
                 val dismissState = rememberDismissState(
                     confirmStateChange = { dismissValue ->
-                        if (!alreadyDismissed.value &&
+                        if (
+//                            !alreadyDismissed.value &&
                             dismissValue == DismissValue.DismissedToStart ||
                             dismissValue == DismissValue.DismissedToEnd
                         ) {
-                            alreadyDismissed.value = true
-
-                            visibleMap[item.id] = false // запускаем анимацию исчезновения
+//                            alreadyDismissed.value = true
+//                            visibleMap[item.id] = false // запускаем анимацию исчезновения
+                            showConfirmDialog = true // Запрос подтверждения удаления
                             false // НЕ удаляем сразу — ждём завершения анимации
                         } else {
                             false
                         }
                     }
                 )
+                //42 Диалоговое окно подтверждения удаления
+                if (showConfirmDialog) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            // Пользователь нажал вне диалога или назад, отменяем удаление
+                            showConfirmDialog = false
+                            scope.launch {
+                                dismissState.reset() // Сбрасываем состояние свайпа
+                            }
+                        },
+                        title = { Text(text = stringResource(R.string.attention)) },
+                        text = { Text(text = stringResource(R.string.delete_question)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showConfirmDialog = false
+                                visibleMap[item.id] = false // Запускаем анимацию исчезновения
+                                // onSwipeDelete(item) // Переместим вызов удаления в LaunchedEffect, чтобы дождаться анимации
+                            }) {
+                                Text(stringResource(R.string.yes))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                showConfirmDialog = false
+                                scope.launch {
+                                    dismissState.reset() // Сбрасываем состояние свайпа
+                                }
+                            }) {
+                                Text(stringResource(R.string.no))
+                            }
+                        }
+                    )
+                }
                 // Анимация элемента списка
                 AnimatedVisibility(
                     visible = visible,
@@ -218,8 +260,9 @@ private fun MonthList(
                     LaunchedEffect(visible) {
                         if (!visible) {
                             delay(300) // Ждём окончания анимации
-
-                            // Показываем Snackbar и ждём результата
+                            //42
+                            onSwipeDelete(item)
+/*                            // Показываем Snackbar и ждём результата
                             val result = scope.launch {
                                 val snackbarResult = snackbarHostState.showSnackbar(
                                     message = "УДАЛИТЬ?",
@@ -235,9 +278,9 @@ private fun MonthList(
                                     onSwipeDelete(item)
                                 }
                             }
+ */
                         }
                     }
-
                     SwipeToDismiss(
                         state = dismissState,
                         directions = setOf(
@@ -245,13 +288,15 @@ private fun MonthList(
                             DismissDirection.EndToStart
                         ),
                         background = {
-                            val direction = dismissState.dismissDirection
+/*
                             // Цвет фона для свайпа.
+                            val direction = dismissState.dismissDirection
                             val color = when (direction) {
                                 DismissDirection.StartToEnd -> Color.Red
                                 DismissDirection.EndToStart -> Color.Red
                                 null -> Color.Transparent
                             }
+ */
                             //Чтобы иконка удаления элемента была с обеих сторон во время свайпа.
                             val alignment = when (dismissState.dismissDirection) {
                                 DismissDirection.StartToEnd -> Alignment.CenterStart
@@ -261,7 +306,7 @@ private fun MonthList(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(color)
+//                                    .background(color)
                                     //отступ иконки от краёв экрана.
                                     .padding(horizontal = 20.dp),
                                 contentAlignment = alignment

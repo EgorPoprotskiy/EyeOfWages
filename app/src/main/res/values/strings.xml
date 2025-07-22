@@ -35,5 +35,9 @@
     <string name="rayon_dop_10">Районный коэффициент(доп)(10%), руб.:</string>
     <string name="aliments25">25%, руб.:</string>
     <string name="aliments75">75%, руб.:</string>
+    <string name="attention">Подтвердите удаление</string>
+    <string name="delete_question">Вы уверены, что хотите удалить эту запись?</string>
+    <string name="yes">Удалить</string>
+    <string name="no">Отмена</string>
 
 </resources>
