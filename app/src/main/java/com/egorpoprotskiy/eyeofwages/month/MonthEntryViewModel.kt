@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import com.egorpoprotskiy.eyeofwages.network.CalendarApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import java.time.YearMonth
 
 class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
@@ -42,6 +43,18 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
                     )
                 )
             }
+            // Получаем текущий год и месяц
+//            val currentYearMonth = YearMonth.now()
+//            val currentYear = currentYearMonth.year.toString()
+//            val currentMonth = currentYearMonth.monthValue.toString()
+
+// Обновляем UI-состояние и StateFlow с текущими данными
+            updateUiState(
+                monthUiState.itemDetails.copy(
+                    yearName = monthUiState.itemDetails.yearName,
+                    monthName = monthUiState.itemDetails.monthName
+                )
+            )
         }
 
         viewModelScope.launch {
