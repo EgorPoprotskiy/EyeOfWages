@@ -248,8 +248,17 @@ fun InputText(
     OutlinedTextField(
         value = value,
         onValueChange = {
-            if (it.all { ch -> ch.isDigit() }) {
-//                textFieldValue = it
+//            if (it.all { ch -> ch.isDigit() }) {
+//                onValueChange(it)
+//            }
+            // Проверка, что можно ввести только одну десятичную точку.
+            val newValue = if (it.count { ch -> ch == '.' } <= 1) {
+                it
+            } else {
+                value
+            }
+            //Разрешение на ввод и числа и точки.
+            if (newValue.all { ch -> ch.isDigit() || ch == '.'}) {
                 onValueChange(it)
             }
         },
@@ -264,7 +273,7 @@ fun InputText(
                 isFocused = focusState.isFocused
             },
         singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface
