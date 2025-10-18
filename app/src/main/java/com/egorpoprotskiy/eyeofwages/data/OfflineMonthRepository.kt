@@ -1,5 +1,7 @@
 package com.egorpoprotskiy.eyeofwages.data
 
+import android.util.Log
+import android.util.Log.e
 import kotlinx.coroutines.flow.Flow
 //отделили логику хранения от остального кода (ViewModel, UI),
 class OfflineMonthRepository(private val monthDao: MonthDao) : MonthRepository {

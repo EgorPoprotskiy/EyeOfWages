@@ -1,5 +1,6 @@
 package com.egorpoprotskiy.eyeofwages.home
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -54,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -240,6 +242,8 @@ private fun MonthList(
                         }
                     )
                 }
+
+                val context = LocalContext.current
                 // Анимация элемента списка
                 AnimatedVisibility(
                     visible = visible,
@@ -259,7 +263,9 @@ private fun MonthList(
                     // Когда элемент стал невидимым — вызываем удаление
                     LaunchedEffect(visible) {
                         if (!visible) {
-                            delay(300) // Ждём окончания анимации
+                            delay(150) // Ждём окончания анимации
+                            // Для дебага(показывает на экране ID элемента, который был удален)
+//                            Toast.makeText(context, "Удаляю ID: ${item.id}", Toast.LENGTH_SHORT).show()
                             //42
                             onSwipeDelete(item)
 /*                            // Показываем Snackbar и ждём результата

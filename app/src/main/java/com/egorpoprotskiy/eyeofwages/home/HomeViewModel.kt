@@ -1,5 +1,6 @@
 package com.egorpoprotskiy.eyeofwages.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egorpoprotskiy.eyeofwages.data.Month
