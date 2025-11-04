@@ -26,6 +26,8 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.AlertDialog
@@ -47,6 +49,8 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -82,7 +86,7 @@ object HomeDestination: NavigationDestination {
     override val titleRes = R.string.app_name
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     navigateToMonthEntry: () -> Unit,
@@ -92,9 +96,12 @@ fun HomeScreen(
 ) {
     val homeUiSate by viewModel.homeUiState.collectAsState()
     // Получаем состояние загрузки из ViewModel для PULL-TO-REFRESH
-    val isRefreshingState = viewModel.isRefreshing.collectAsState()
+    val isRefreshingState: State<Boolean> = viewModel.isRefreshing.collectAsState()
     // Новое состояние для Pull-to-Refresh
-    val pullRefreshState = rememberPullToRefreshState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshingState.value,
+        onRefresh = viewModel::refreshData
+    )
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
@@ -121,12 +128,19 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshingState.value,
-            onRefresh = viewModel::refreshData,
-            state = pullRefreshState,
-            modifier = Modifier.fillMaxSize()
-        ) {
+//        PullToRefreshBox(
+//            isRefreshing = isRefreshingState.value,
+//            onRefresh = viewModel::refreshData,
+//            state = pullRefreshState,
+//            modifier = Modifier.fillMaxSize()
+//        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .pullRefresh(pullRefreshState)
+        )
+        {
             HomeBody(
                 monthList = homeUiSate.monthList,
                 onMonthClick = navigateToMonthUpdate,
@@ -135,10 +149,13 @@ fun HomeScreen(
                         viewModel.deleteMonth(month)
                     }
                 },
-                modifier = Modifier
-                .fillMaxSize()
-                ,
-                contentPadding = innerPadding
+                modifier = Modifier.fillMaxSize(),
+//                contentPadding = innerPadding
+            )
+            PullRefreshIndicator(
+                refreshing = isRefreshingState.value,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
             )
         }
     }
@@ -150,7 +167,7 @@ private fun HomeBody(
     onMonthClick: (Int) -> Unit,
     onSwipeDelete: (Month) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+//    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -168,8 +185,9 @@ private fun HomeBody(
                 monthList = monthList,
                 onMonthClick = { onMonthClick(it.id)},
                 onSwipeDelete = onSwipeDelete,
-                contentPadding = contentPadding,
-                modifier = modifier
+//                contentPadding = contentPadding,
+                modifier = modifier.fillMaxSize()
+
             )
         }
     }
@@ -182,7 +200,7 @@ private fun MonthList(
     monthList: List<Month>,
     onMonthClick: (Month) -> Unit,
     onSwipeDelete: (Month) -> Unit,
-    contentPadding: PaddingValues,
+//    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -202,7 +220,7 @@ private fun MonthList(
     Box(modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding
+//            contentPadding = contentPadding
         ) {
             items(items = monthList, key = { it.id }) { item ->
                 val visible = visibleMap[item.id] ?: true
@@ -453,7 +471,7 @@ fun MonthListPreview() {
             fakeMonths,
             onMonthClick = {},
             onSwipeDelete = {},
-            contentPadding = PaddingValues(0.dp)
+//            contentPadding = PaddingValues(0.dp)
         )
     }
 }
@@ -470,7 +488,7 @@ fun MonthBodyPreview() {
             fakeMonths,
             onMonthClick = {},
             onSwipeDelete = {},
-            contentPadding = PaddingValues(0.dp)
+//            contentPadding = PaddingValues(0.dp)
         )
     }
 }
