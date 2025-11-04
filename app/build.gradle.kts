@@ -95,5 +95,4 @@ dependencies {
     // Если ты добавил okhttp-bom, то тебе также понадобится обычный okhttp, но его версия будет управляться BOM
     implementation("com.squareup.okhttp3:okhttp") // Добавь, если Retrofit не тянет его транзитивно, или если нужен базовый OkHttp
 
-
 }

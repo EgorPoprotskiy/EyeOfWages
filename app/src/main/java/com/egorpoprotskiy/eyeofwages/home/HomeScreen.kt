@@ -26,6 +26,7 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -41,6 +42,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -86,6 +91,11 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     val homeUiSate by viewModel.homeUiState.collectAsState()
+    // Получаем состояние загрузки из ViewModel для PULL-TO-REFRESH
+    val isRefreshingState = viewModel.isRefreshing.collectAsState()
+    // Новое состояние для Pull-to-Refresh
+    val pullRefreshState = rememberPullToRefreshState()
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
 
@@ -111,17 +121,26 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
-        HomeBody(
-            monthList = homeUiSate.monthList,
-            onMonthClick = navigateToMonthUpdate,
-            onSwipeDelete = { month ->
-                coroutineScope.launch {
-                    viewModel.deleteMonth(month)
-            }
-                            },
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = innerPadding
-        )
+        PullToRefreshBox(
+            isRefreshing = isRefreshingState.value,
+            onRefresh = viewModel::refreshData,
+            state = pullRefreshState,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            HomeBody(
+                monthList = homeUiSate.monthList,
+                onMonthClick = navigateToMonthUpdate,
+                onSwipeDelete = { month ->
+                    coroutineScope.launch {
+                        viewModel.deleteMonth(month)
+                    }
+                },
+                modifier = Modifier
+                .fillMaxSize()
+                ,
+                contentPadding = innerPadding
+            )
+        }
     }
 }
 
