@@ -2,6 +2,7 @@ package com.egorpoprotskiy.eyeofwages
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,7 +23,9 @@ fun MonthTopAppBar(
     canNavigateBack: Boolean,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigateUp: () -> Unit = {}
+    showAction: Boolean = false,
+    navigateUp: () -> Unit = {},
+    onActionClick: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -38,6 +41,16 @@ fun MonthTopAppBar(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        },
+        actions = {
+            if (showAction) {
+                IconButton(onClick = onActionClick) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.about_app)
                     )
                 }
             }

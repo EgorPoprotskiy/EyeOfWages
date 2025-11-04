@@ -13,6 +13,8 @@ import com.egorpoprotskiy.eyeofwages.month.MonthEntryDestination
 import com.egorpoprotskiy.eyeofwages.month.MonthEntryScreen
 import com.egorpoprotskiy.eyeofwages.home.HomeDestination
 import com.egorpoprotskiy.eyeofwages.home.HomeScreen
+import com.egorpoprotskiy.eyeofwages.month.AboutDestination
+import com.egorpoprotskiy.eyeofwages.month.AboutScreen
 import com.egorpoprotskiy.eyeofwages.month.MonthEditDestination
 import com.egorpoprotskiy.eyeofwages.month.MonthEditScreen
 
@@ -31,7 +33,8 @@ fun MonthNavHost(
         composable (route = HomeDestination.route) {
             HomeScreen(
                 navigateToMonthEntry = {navController.navigate(MonthEntryDestination.route)},
-                navigateToMonthUpdate = {navController.navigate("${MonthDetailsDestination.route}/${it}")}
+                navigateToMonthUpdate = {navController.navigate("${MonthDetailsDestination.route}/${it}")},
+                navigateToAbout = {navController.navigate(AboutDestination.route)}
             )
         }
 
@@ -39,6 +42,13 @@ fun MonthNavHost(
         composable (route = MonthEntryDestination.route) {
             MonthEntryScreen(
                 onNavigateUp = {navController.navigateUp()},
+                navigateBack = {navController.popBackStack()}
+            )
+        }
+
+        //AboutScreen -> HomeScreen
+        composable(route = AboutDestination.route) {
+            AboutScreen(
                 navigateBack = {navController.popBackStack()}
             )
         }
