@@ -65,6 +65,7 @@ fun MonthDetailsScreen(
     val uiState = viewModel.uiState.collectAsState()
     // 20
     val calcState by viewModel.calculateData.collectAsState()
+    val totalSdzBase by viewModel.totalSdzBase.collectAsState()
 //    val coroutineScope = rememberCoroutineScope()        //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -92,6 +93,7 @@ fun MonthDetailsScreen(
         MonthDetailsBody(
             month = uiState.value.monthDetails.toItem(),
             calculated = calcState,
+            totalSdzBase = totalSdzBase,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -107,6 +109,7 @@ fun MonthDetailsScreen(
 private fun MonthDetailsBody(
     month: Month,
     calculated: MonthCalculateData,
+    totalSdzBase: Double,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -118,6 +121,7 @@ private fun MonthDetailsBody(
         MonthDetails(
             month = month,
             calculated = calculated,
+            totalSdzBase = totalSdzBase,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -126,6 +130,7 @@ private fun MonthDetailsBody(
 fun MonthDetails(
     month: Month,
     calculated: MonthCalculateData,
+    totalSdzBase: Double,
     modifier: Modifier = Modifier
 ) {
     //переменная, которая хранит состояние expanded для кнопки свернуть/равернуть
@@ -199,6 +204,16 @@ fun MonthDetails(
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.otpuskPay_detail),
                 monthDetails = calculated.otpuskPay
+            )
+            HorizontalDivider(thickness = 1.dp)
+            MonthDetailsRow(
+                labelDetails = stringResource(R.string.total_accrual_12_months),
+                monthDetails = totalSdzBase
+            )
+            HorizontalDivider(thickness = 1.dp)
+            MonthDetailsRow(
+                labelDetails = stringResource(R.string.itog_bez_ndfl),
+                monthDetails = calculated.itogBezNdfl
             )
             HorizontalDivider(thickness = 7.dp)
             Column (
@@ -310,7 +325,8 @@ fun MonthDetailsScreenLightPreview() {
                 rayon10 = 5000.0,
                 vislugaRub = 2000.0,
                 itog = 80000.0,
-            )
+            ),
+            totalSdzBase = 777.0,
         )
     }
 }
@@ -351,7 +367,8 @@ fun MonthDetailsScreenDarkPreview() {
                 vislugaRub = 2000.0,
                 itog = 80000.0,
                 itogBezNdfl = 10000.0
-            )
+            ),
+            totalSdzBase = 777.0,
         )
     }
 }

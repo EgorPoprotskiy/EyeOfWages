@@ -3,7 +3,13 @@ package com.egorpoprotskiy.eyeofwages.data
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun monthCalculations(month: Month): MonthCalculateData {
+fun MonthCalculations(month: Month): MonthCalculateData {
+    //Для отпуска
+    val bolnichniy = month.bolnichniy
+    val otpuskDays = month.otpuskDays * 1.0 //Чтобы был Double
+    var otpuskPay = month.otpuskPay
+
+
     val oneChasDenRub = if (month.norma != 0) month.oklad / month.norma else 0.0
     val oneChasNochRub = oneChasDenRub * 0.4
 
@@ -36,16 +42,15 @@ fun monthCalculations(month: Month): MonthCalculateData {
     val severn30 = base * 0.3
     val rayon10 = base * 0.1
 
-    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen
-    val ndfl = itogBezNdfl * 0.13
-    val itog = itogBezNdfl - ndfl
+    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen + otpuskPay
+    otpuskPay = otpuskPay - (otpuskPay * 0.13) //вычитаем налог для отображения на экране деталей
+    val ndfl = itogBezNdfl * 0.13 //расчет налога со всех доходов.
+    val itog = itogBezNdfl - ndfl //итоговая сумма вместе с отпускными(после налогов)
 
     val aliments25 = itog * 0.25
     val aliments75 = itog * 0.75
 
-    val bolnichniy = month.bolnichniy
-    val otpuskDays = month.otpuskDays * 1.0 //Чтобы был Double
-    val otpuskPay = month.otpuskPay * 10
+
 
 
 //Сумма последних 12 месяцев

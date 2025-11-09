@@ -1,6 +1,5 @@
 package com.egorpoprotskiy.eyeofwages.home
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -67,7 +66,7 @@ import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.R
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
-import com.egorpoprotskiy.eyeofwages.data.monthCalculations
+import com.egorpoprotskiy.eyeofwages.data.MonthCalculations
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -359,7 +358,7 @@ private fun MonthList(
                         dismissContent = {
                             MonthItem(
                                 month = item,
-                                calculated = monthCalculations(item),
+                                calculated = MonthCalculations(item),
                                 modifier = Modifier
                                     .padding(dimensionResource(id = R.dimen.padding_small))
                                     .clickable { onMonthClick(item) }

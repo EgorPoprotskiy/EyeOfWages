@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.ColumnInfo
 import com.egorpoprotskiy.eyeofwages.data.Month
+import com.egorpoprotskiy.eyeofwages.data.MonthCalculations
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -121,9 +122,27 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
     }
 
     suspend fun saveItem() {
-        if (validateInput()) {
-            monthRepository.insertMonth(monthUiState.itemDetails.toItem())
-        }
+//        if (validateInput()) {
+//            monthRepository.insertMonth(monthUiState.itemDetails.toItem())
+//        }
+        if (!validateInput()) return
+
+        // 1. Создаем Entity из UI-данных (пока без Brutto, но с окладом, часами и т.д.)
+        val currentMonthEntity = monthUiState.itemDetails.toItem()
+
+        // 2. ВЫЗЫВАЕМ ВАШ КЛАСС РАСЧЕТА ЗДЕСЬ
+        // (MonthCalculations должен быть инициализирован с currentMonthEntity, чтобы рассчитать Brutto)
+        val calculationResults = MonthCalculations(currentMonthEntity)
+
+        // 3. Создаем Entity для сохранения, перезаписывая рассчитанное значение
+        val monthToSave = currentMonthEntity.copy(
+            // Используем рассчитанное значение для сохранения!
+            itogBezNdfl = calculationResults.itogBezNdfl,
+            itog = calculationResults.itog,
+            // ... (Здесь должны быть также рассчитанные отпускные, но пока сохраняем только Brutto)
+        )
+        // 4. Сохранение
+        monthRepository.insertMonth(monthToSave)
     }
 }
 

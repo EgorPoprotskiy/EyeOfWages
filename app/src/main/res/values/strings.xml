@@ -54,4 +54,6 @@
     <string name="bolnichniy_detail">Исключаемые начисления</string>
     <string name="otpuskPay_detail">Сумма отпускных</string>
     <string name="otpuskDays_detail">Дни отпуска</string>
+
+    <string name="total_accrual_12_months">Общая сумма начислений (12 мес.)</string>
 </resources>
