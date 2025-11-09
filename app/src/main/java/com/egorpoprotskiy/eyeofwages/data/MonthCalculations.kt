@@ -3,12 +3,15 @@ package com.egorpoprotskiy.eyeofwages.data
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun MonthCalculations(month: Month): MonthCalculateData {
+fun MonthCalculations(
+    month: Month
+): MonthCalculateData {
     //Для отпуска
     val bolnichniy = month.bolnichniy
-    val otpuskDays = month.otpuskDays * 1.0 //Чтобы был Double
-    var otpuskPay = month.otpuskPay
+//    var otpuskPay = month.otpuskPay
 
+//    val otpuskDays = month.otpuskDays * 1.0 //Чтобы был Double
+//    val otpuskDays: Double //Чтобы был Double
 
     val oneChasDenRub = if (month.norma != 0) month.oklad / month.norma else 0.0
     val oneChasNochRub = oneChasDenRub * 0.4
@@ -42,8 +45,9 @@ fun MonthCalculations(month: Month): MonthCalculateData {
     val severn30 = base * 0.3
     val rayon10 = base * 0.1
 
-    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen + otpuskPay
-    otpuskPay = otpuskPay - (otpuskPay * 0.13) //вычитаем налог для отображения на экране деталей
+//    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen // для расчета дохода за 12 месяцев
+    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen
+//    otpuskPay = otpuskPay - (otpuskPay * 0.13) //вычитаем налог для отображения на экране деталей
     val ndfl = itogBezNdfl * 0.13 //расчет налога со всех доходов.
     val itog = itogBezNdfl - ndfl //итоговая сумма вместе с отпускными(после налогов)
 
@@ -90,8 +94,9 @@ fun MonthCalculations(month: Month): MonthCalculateData {
         itogBezNdfl =  round2(itogBezNdfl),
 
         bolnichniy = round2(bolnichniy), // Сумма, исключаемая из СДЗ (Больничные, пособия)
-        otpuskDays = round2(otpuskDays), // Дни отпуска (если ввод <= 39)
-        otpuskPay = round2(otpuskPay)
+//        otpuskDays = round2(otpuskDays), // Дни отпуска (если ввод <= 39)
+//        otpuskPay = round2(otpuskPay)
+
     )
 }
 

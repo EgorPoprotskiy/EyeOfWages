@@ -50,6 +50,7 @@ class MonthDetailsViewModel (
     init {
         viewModelScope.launch {
             monthRepository.getMonthStream(monthId).filterNotNull().collect { month ->
+                Log.d("DEBUG_DETAIL_READ", "Значение otpuskPay, прочитанное из БД: ${month.otpuskPay}")
                 _uiState.value = MonthDetailsUiState(monthDetails = month.toMonthDetails())
                 _calculateData.value = MonthCalculations(month)
             }

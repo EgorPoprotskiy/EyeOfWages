@@ -1,5 +1,6 @@
 package com.egorpoprotskiy.eyeofwages.month
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +15,8 @@ import kotlinx.coroutines.launch
 import com.egorpoprotskiy.eyeofwages.network.CalendarApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.YearMonth
 import kotlin.String
 import kotlin.text.toDoubleOrNull
@@ -122,29 +125,113 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
     }
 
     suspend fun saveItem() {
-//        if (validateInput()) {
-//            monthRepository.insertMonth(monthUiState.itemDetails.toItem())
-//        }
+        // Проверка валидации, если она есть
         if (!validateInput()) return
 
-        // 1. Создаем Entity из UI-данных (пока без Brutto, но с окладом, часами и т.д.)
+        // 1. Создаем Entity из UI-данных
         val currentMonthEntity = monthUiState.itemDetails.toItem()
+        val daysToTake = currentMonthEntity.otpuskDays // Дни отпуска, введенные пользователем
 
-        // 2. ВЫЗЫВАЕМ ВАШ КЛАСС РАСЧЕТА ЗДЕСЬ
-        // (MonthCalculations должен быть инициализирован с currentMonthEntity, чтобы рассчитать Brutto)
+        // 2. РАСЧЕТ ЗП (Brutto) для ТЕКУЩЕГО месяца
+        // Вызов ВАШЕЙ существующей функции MonthCalculations
         val calculationResults = MonthCalculations(currentMonthEntity)
+        val calculatedBrutto = calculationResults.itogBezNdfl
 
-        // 3. Создаем Entity для сохранения, перезаписывая рассчитанное значение
+
+        // ---------------------------------------------------------------------
+        // НАЧАЛО РАСЧЕТА СРЕДНЕГО ДНЕВНОГО ЗАРАБОТКА (СДЗ)
+        // ---------------------------------------------------------------------
+
+        // 3. Получаем 12 месяцев ИЗ РЕПОЗИТОРИЯ
+        // Используем .first() для получения одного значения Flow
+        val lastMonths = monthRepository.getlist12Month().first()
+
+        // 4. ФИЛЬТРАЦИЯ: Исключаем текущий месяц из списка для СДЗ
+        val last12MonthsForSdz = lastMonths
+            .filter { month ->
+                // Убеждаемся, что текущий месяц не включен в расчетный период СДЗ
+                !(month.yearName == currentMonthEntity.yearName && month.monthName == currentMonthEntity.monthName)
+            }
+            .take(12) // Берем только 12 месяцев
+
+
+        // 5. РАССЧЕТ ЧИСЛИТЕЛЯ И ЗНАМЕНАТЕЛЯ СДЗ
+
+        // ЧИСЛИТЕЛЬ: Общая чистая база начислений (Brutto - Исключения)
+        val totalSdzBase = calculateTotalCleanAccrual(last12MonthsForSdz)
+
+        // ЗНАМЕНАТЕЛЬ: Общее скорректированное количество дней
+        val totalAdjustedDays = calculateTotalAdjustedDays(last12MonthsForSdz)
+
+
+        // 6. РАССЧЕТ СДЗ И СУММЫ ОТПУСКНЫХ
+
+        val sdz = if (totalAdjustedDays > 0) totalSdzBase / totalAdjustedDays else 0.0
+
+        // Фиксация рассчитанной суммы отпускных
+        val finalOtpuskPay = if (daysToTake > 0) {
+            round2(sdz * daysToTake) // Умножаем СДЗ на введенные дни
+        } else {
+            // Если дни не введены, сохраняем 0 или введенную сумму
+            currentMonthEntity.otpuskPay
+        }
+
+
+        // ---------------------------------------------------------------------
+        // 7. СОХРАНЕНИЕ
+        // ---------------------------------------------------------------------
+
         val monthToSave = currentMonthEntity.copy(
-            // Используем рассчитанное значение для сохранения!
-            itogBezNdfl = calculationResults.itogBezNdfl,
-            itog = calculationResults.itog,
-            // ... (Здесь должны быть также рассчитанные отпускные, но пока сохраняем только Brutto)
+            // Сохраняем рассчитанное Brutto
+            itogBezNdfl = calculatedBrutto,
+            // Сохраняем рассчитанные Отпускные
+            otpuskPay = finalOtpuskPay,
+
+            // ... (другие рассчитанные поля, если вы их обновляете)
+            itog = calculationResults.itog, // Например
         )
-        // 4. Сохранение
+        Log.d("DEBUG_SAVE", "Final OtpuskPay to Save: $finalOtpuskPay")
+        // Обновление/вставка в БД
         monthRepository.insertMonth(monthToSave)
     }
 }
+// ---------------------------------------------------------------------
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (добавьте их в ваш MonthEntryViewModel.kt)
+// ---------------------------------------------------------------------
+
+/**
+ * Рассчитывает общую ЧИСТУЮ базу начислений за 12 месяцев (ЧИСЛИТЕЛЬ СДЗ).
+ * Brutto - (Больничные + Отпускные).
+ */
+private fun calculateTotalCleanAccrual(last12Months: List<Month>): Double {
+    if (last12Months.isEmpty()) return 0.0
+
+    return last12Months.sumOf { month ->
+        // Выплаты, не идущие в СДЗ:
+        val nonSDZAccruals = month.bolnichniy + month.otpuskPay
+        // Чистая база для СДЗ
+        month.itogBezNdfl - nonSDZAccruals
+    }
+}
+/**
+ * Рассчитывает Общее скорректированное количество календарных дней (ЗНАМЕНАТЕЛЬ СДЗ).
+ * 29.3 * (Отработанные часы / Норма часов).
+ */
+private fun calculateTotalAdjustedDays(last12Months: List<Month>): Double {
+    val AVG_CALENDAR_DAYS = 29.3
+    if (last12Months.isEmpty()) return 0.0
+
+    return last12Months.sumOf { month ->
+        if (month.norma == 0) 0.0 else {
+            AVG_CALENDAR_DAYS * (month.rabTime.toDouble() / month.norma.toDouble())
+        }
+    }
+}
+/**
+ * Функция округления до двух знаков (скорее всего, у вас уже есть).
+ */
+private fun round2(value: Double): Double =
+    BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toDouble()
 
 data class MonthUiState(
     val itemDetails: MonthDetails = MonthDetails(),

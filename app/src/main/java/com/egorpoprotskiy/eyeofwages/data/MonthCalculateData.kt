@@ -19,5 +19,6 @@ data class MonthCalculateData(
 
     val bolnichniy: Double = 0.0, // Сумма, исключаемая из СДЗ (Больничные, пособия)
     val otpuskDays: Double = 0.0, // Дни отпуска (если ввод <= 39)
-    val otpuskPay: Double = 0.0 // Сумма отпускных (введенная или рассчитанная)
+    val otpuskPay: Double = 0.0, // Сумма отпускных (введенная или рассчитанная)
+
 )

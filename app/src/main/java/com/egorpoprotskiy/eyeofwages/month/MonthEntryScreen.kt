@@ -197,6 +197,11 @@ fun MonthEntryText(
             stringResource(R.string.bolnichniy)
         )
         InputText(
+            itemDetails.otpuskDays,
+            onValueChange = {onItemValueChange(itemDetails.copy(otpuskDays = it))},
+            stringResource(R.string.otpuskDays_detail)
+        )
+        InputText(
             itemDetails.otpuskPay,
             onValueChange = {onItemValueChange(itemDetails.copy(otpuskPay = it))},
             stringResource(R.string.otpuskPay_detail)
