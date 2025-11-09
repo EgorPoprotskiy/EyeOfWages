@@ -43,6 +43,11 @@ fun monthCalculations(month: Month): MonthCalculateData {
     val aliments25 = itog * 0.25
     val aliments75 = itog * 0.75
 
+    val bolnichniy = month.bolnichniy
+    val otpuskDays = month.otpuskDays * 1.0 //Чтобы был Double
+    val otpuskPay = month.otpuskPay * 10
+
+
 //Сумма последних 12 месяцев
 //    val last12Months = ArrayDeque<Double>()
 //    if (last12Months.size >= 12) {
@@ -76,7 +81,12 @@ fun monthCalculations(month: Month): MonthCalculateData {
         ndfl = round2(ndfl),
         itog = round2(itog),
         aliments25 = round2(aliments25),
-        aliments75 = round2(aliments75)
+        aliments75 = round2(aliments75),
+        itogBezNdfl =  round2(itogBezNdfl),
+
+        bolnichniy = round2(bolnichniy), // Сумма, исключаемая из СДЗ (Больничные, пособия)
+        otpuskDays = round2(otpuskDays), // Дни отпуска (если ввод <= 39)
+        otpuskPay = round2(otpuskPay)
     )
 }
 

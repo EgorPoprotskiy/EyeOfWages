@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -110,7 +111,7 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            androidx.compose.material3.FloatingActionButton(
+            FloatingActionButton(
                 onClick = navigateToMonthEntry,
                 shape = androidx.compose.material3.MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
@@ -430,7 +431,11 @@ fun MonthItemPreview() {
         8,
         9,
         9,
-        15.0
+        15.0,
+        777.0,
+        bolnichniy = 777.0,
+        otpuskDays = 7,
+        otpuskPay = 777.0,
     )
     val raschet = MonthCalculateData(
         rabTimeRub = 1000.0,
@@ -457,8 +462,8 @@ fun MonthItemPreview() {
 @Composable
 fun MonthListPreview() {
     val fakeMonths = listOf(
-        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0),
-        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0)
+        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0),
+        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0)
     )
     MaterialTheme {
         MonthList(
@@ -474,8 +479,8 @@ fun MonthListPreview() {
 @Composable
 fun MonthBodyPreview() {
     val fakeMonths = listOf(
-        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0),
-        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0)
+        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0),
+        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0)
     )
     MaterialTheme {
         HomeBody(

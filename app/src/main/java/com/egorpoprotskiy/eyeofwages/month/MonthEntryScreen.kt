@@ -191,6 +191,16 @@ fun MonthEntryText(
             onValueChange = {onItemValueChange(itemDetails.copy(premia = it))},
             stringResource(R.string.premia)
         )
+        InputText(
+            itemDetails.bolnichniy,
+            onValueChange = {onItemValueChange(itemDetails.copy(bolnichniy = it))},
+            stringResource(R.string.bolnichniy)
+        )
+        InputText(
+            itemDetails.otpuskPay,
+            onValueChange = {onItemValueChange(itemDetails.copy(otpuskPay = it))},
+            stringResource(R.string.otpuskPay_detail)
+        )
         val vislugaOptions = listOf("0", "5", "10", "15")
         Column {
             Text(
@@ -336,7 +346,10 @@ fun MonthEntreScreenPreview() {
                     visluga = "0",
                     prikazDen = "0",
                     prikazNoch = "0",
-                    itog = "10000" // Возможно, itog здесь не нужен для ввода, если он вычисляется
+                    itog = "10000", // Возможно, itog здесь не нужен для ввода, если он вычисляется
+                    bolnichniy = "777",
+                    otpuskPay = "777.0"
+
                 )
             ),
             onItemValueChange = {},

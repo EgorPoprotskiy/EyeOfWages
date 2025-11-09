@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.ColumnInfo
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
 import kotlinx.coroutines.flow.first
@@ -13,6 +14,9 @@ import com.egorpoprotskiy.eyeofwages.network.CalendarApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import java.time.YearMonth
+import kotlin.String
+import kotlin.text.toDoubleOrNull
+import kotlin.text.toIntOrNull
 
 class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
@@ -141,7 +145,14 @@ data class MonthDetails(
     var visluga: String = "0",
     val prikazDen: String = "",
     val prikazNoch: String = "",
-    val itog: String = ""
+    val itog: String = "",
+
+    var itogBezNdfl: String = "", //сумма до вычета ндфл
+    val bolnichniy: String = "", // Сумма, исключаемая из СДЗ (Больничные, пособия)
+//    val inputOtpuskDay: String = ""
+    val otpuskDays: String = "", // Дни отпуска (если ввод <= 39)
+    val otpuskPay: String = "" // Сумма отпускных (введенная или рассчитанная)
+
 )
 
 fun MonthDetails.toItem(): Month = Month (
@@ -157,7 +168,11 @@ fun MonthDetails.toItem(): Month = Month (
     visluga = visluga.toIntOrNull() ?: 0,
     prikazDen = prikazDen.toIntOrNull() ?: 0,
     prikazNoch = prikazNoch.toIntOrNull() ?: 0,
-    itog = itog.toDoubleOrNull() ?: 0.0
+    itog = itog.toDoubleOrNull() ?: 0.0,
+    itogBezNdfl = itogBezNdfl.toDoubleOrNull() ?: 0.0,
+    bolnichniy = bolnichniy.toDoubleOrNull() ?: 0.0,
+    otpuskDays = otpuskDays.toIntOrNull() ?: 0,
+    otpuskPay = otpuskPay.toDoubleOrNull() ?: 0.0
 )
 
 fun Month.toItemUiState(isEntryValid: Boolean = false): MonthUiState = MonthUiState(
@@ -178,5 +193,9 @@ fun Month.toMonthDetails(): MonthDetails = MonthDetails(
     visluga = visluga.toString(),
     prikazDen = prikazDen.toString(),
     prikazNoch = prikazNoch.toString(),
-    itog = itog.toString()
+    itog = itog.toString(),
+    itogBezNdfl = itogBezNdfl.toString(),
+    bolnichniy = bolnichniy.toString(),
+    otpuskDays = otpuskDays.toString(),
+    otpuskPay = otpuskPay.toString(),
 )

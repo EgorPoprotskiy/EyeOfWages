@@ -18,4 +18,6 @@ class OfflineMonthRepository(private val monthDao: MonthDao) : MonthRepository {
     override suspend fun updateMonth(month: Month) { monthDao.update(month) }
     //35 получение последнего сохраненного элемента.
     override suspend fun getLastMonth(): Flow<Month?> = monthDao.getLastMonth()
+    //Получение последних 12 месяцев
+    override suspend fun getlist12Month(): Flow<List<Month>> = monthDao.getlist12Month()
 }

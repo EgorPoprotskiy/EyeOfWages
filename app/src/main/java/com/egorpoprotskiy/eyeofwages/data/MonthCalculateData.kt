@@ -15,4 +15,9 @@ data class MonthCalculateData(
     val itog: Double = 0.0,
     val aliments25: Double = 0.0,
     val aliments75: Double = 0.0,
+    val itogBezNdfl: Double = 0.0,
+
+    val bolnichniy: Double = 0.0, // Сумма, исключаемая из СДЗ (Больничные, пособия)
+    val otpuskDays: Double = 0.0, // Дни отпуска (если ввод <= 39)
+    val otpuskPay: Double = 0.0 // Сумма отпускных (введенная или рассчитанная)
 )

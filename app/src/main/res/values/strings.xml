@@ -47,4 +47,11 @@
     <string name="bug_fixes">Исправленные ошибки</string>
     <string name="future_plans">Планы на будущее</string>
 
+    <string name="vacation_input">Отпуск: Дни (&lt;=39) / Сумма (&gt;39)</string>
+    <string name="bolnichniy">Исключаемые начисления (Больничные)</string>
+
+    <string name="itog_bez_ndfl">Начислено (Без вычета НДФЛ)</string>
+    <string name="bolnichniy_detail">Исключаемые начисления</string>
+    <string name="otpuskPay_detail">Сумма отпускных</string>
+    <string name="otpuskDays_detail">Дни отпуска</string>
 </resources>

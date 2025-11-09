@@ -190,6 +190,16 @@ fun MonthDetails(
                 labelDetails = stringResource(R.string.visluga_rub),
                 monthDetails = calculated.vislugaRub
             )
+            HorizontalDivider(thickness = 1.dp)
+            MonthDetailsRow(
+                labelDetails = stringResource(R.string.bolnichniy_detail),
+                monthDetails = calculated.bolnichniy
+            )
+            HorizontalDivider(thickness = 1.dp)
+            MonthDetailsRow(
+                labelDetails = stringResource(R.string.otpuskPay_detail),
+                monthDetails = calculated.otpuskPay
+            )
             HorizontalDivider(thickness = 7.dp)
             Column (
                 modifier = Modifier
@@ -283,7 +293,11 @@ fun MonthDetailsScreenLightPreview() {
                 visluga = 0,
                 prikazDen = 0,
                 prikazNoch = 0,
-                itog = 55000.0
+                itog = 55000.0,
+                itogBezNdfl = 777.0,
+                bolnichniy = 777.0,
+                otpuskDays = 777,
+                otpuskPay = 777.0
             ),
             calculated = MonthCalculateData(
                 rabTimeRub = 50000.0,
@@ -295,7 +309,7 @@ fun MonthDetailsScreenLightPreview() {
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
                 vislugaRub = 2000.0,
-                itog = 80000.0
+                itog = 80000.0,
             )
         )
     }
@@ -319,7 +333,11 @@ fun MonthDetailsScreenDarkPreview() {
                 visluga = 0,
                 prikazDen = 0,
                 prikazNoch = 0,
-                itog = 55000.0
+                itog = 55000.0,
+                itogBezNdfl = 777.0,
+                bolnichniy = 777.0,
+                otpuskDays = 777,
+                otpuskPay = 777.0
             ),
             calculated = MonthCalculateData(
                 rabTimeRub = 50000.0,
@@ -331,7 +349,8 @@ fun MonthDetailsScreenDarkPreview() {
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
                 vislugaRub = 2000.0,
-                itog = 80000.0
+                itog = 80000.0,
+                itogBezNdfl = 10000.0
             )
         )
     }

@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "month") //это будет data class в таблице БД(month)
-data class Month (
+data class Month(
     @PrimaryKey(autoGenerate = true) //автоинкрементный первичный ключ(autoGenerate = true — значение будет автоматически генерироваться Room)
     val id: Int = 0,
     @ColumnInfo(name = "monthName")
@@ -31,5 +31,13 @@ data class Month (
     @ColumnInfo(name = "prikaz")
     val prikazNoch: Int,
     @ColumnInfo(name = "itog")
-    var itog: Double
+    var itog: Double,
+    @ColumnInfo(name = "itogBezNdfl")
+    var itogBezNdfl: Double, //сумма до вычета ндфл
+    @ColumnInfo(name = "bolnichniy")
+    val bolnichniy: Double, // Сумма, исключаемая из СДЗ (Больничные, пособия)
+    @ColumnInfo(name = "votpuskDays")
+    val otpuskDays: Int, // Дни отпуска (если ввод <= 39)
+    @ColumnInfo(name = "otpuskPay")
+    val otpuskPay: Double // Сумма отпускных (введенная или рассчитанная)
 )

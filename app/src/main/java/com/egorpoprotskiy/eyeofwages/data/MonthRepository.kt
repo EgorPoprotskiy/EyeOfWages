@@ -31,5 +31,5 @@ interface MonthRepository {
     suspend fun getLastMonth(): Flow<Month?>
 
 //    //Возвращает список из последних 12 месяцев.
-//    suspend fun getlist12Month(): Flow<List<Month>>
+    suspend fun getlist12Month(): Flow<List<Month>>
 }
