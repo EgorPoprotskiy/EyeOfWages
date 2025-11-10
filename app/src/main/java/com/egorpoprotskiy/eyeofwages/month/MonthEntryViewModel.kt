@@ -133,19 +133,15 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
         val daysToTake = currentMonthEntity.otpuskDays // Дни отпуска, введенные пользователем
 
         // 2. РАСЧЕТ ЗП (Brutto) для ТЕКУЩЕГО месяца
-        // Вызов ВАШЕЙ существующей функции MonthCalculations
+        // Вызов существующей функции MonthCalculations
         val calculationResults = MonthCalculations(currentMonthEntity)
         val calculatedBrutto = calculationResults.itogBezNdfl
-
-
         // ---------------------------------------------------------------------
         // НАЧАЛО РАСЧЕТА СРЕДНЕГО ДНЕВНОГО ЗАРАБОТКА (СДЗ)
         // ---------------------------------------------------------------------
-
         // 3. Получаем 12 месяцев ИЗ РЕПОЗИТОРИЯ
         // Используем .first() для получения одного значения Flow
         val lastMonths = monthRepository.getlist12Month().first()
-
         // 4. ФИЛЬТРАЦИЯ: Исключаем текущий месяц из списка для СДЗ
         val last12MonthsForSdz = lastMonths
             .filter { month ->
@@ -153,21 +149,14 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
                 !(month.yearName == currentMonthEntity.yearName && month.monthName == currentMonthEntity.monthName)
             }
             .take(12) // Берем только 12 месяцев
-
-
         // 5. РАССЧЕТ ЧИСЛИТЕЛЯ И ЗНАМЕНАТЕЛЯ СДЗ
-
         // ЧИСЛИТЕЛЬ: Общая чистая база начислений (Brutto - Исключения)
         val totalSdzBase = calculateTotalCleanAccrual(last12MonthsForSdz)
-
         // ЗНАМЕНАТЕЛЬ: Общее скорректированное количество дней
         val totalAdjustedDays = calculateTotalAdjustedDays(last12MonthsForSdz)
 
-
         // 6. РАССЧЕТ СДЗ И СУММЫ ОТПУСКНЫХ
-
         val sdz = if (totalAdjustedDays > 0) totalSdzBase / totalAdjustedDays else 0.0
-
         // Фиксация рассчитанной суммы отпускных
         val finalOtpuskPay = if (daysToTake > 0) {
             round2(sdz * daysToTake) // Умножаем СДЗ на введенные дни
@@ -176,17 +165,14 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
             currentMonthEntity.otpuskPay
         }
 
-
         // ---------------------------------------------------------------------
         // 7. СОХРАНЕНИЕ
         // ---------------------------------------------------------------------
-
         val monthToSave = currentMonthEntity.copy(
             // Сохраняем рассчитанное Brutto
             itogBezNdfl = calculatedBrutto,
             // Сохраняем рассчитанные Отпускные
             otpuskPay = finalOtpuskPay,
-
             // ... (другие рассчитанные поля, если вы их обновляете)
             itog = calculationResults.itog, // Например
         )
@@ -196,9 +182,8 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
     }
 }
 // ---------------------------------------------------------------------
-// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (добавьте их в ваш MonthEntryViewModel.kt)
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 // ---------------------------------------------------------------------
-
 /**
  * Рассчитывает общую ЧИСТУЮ базу начислений за 12 месяцев (ЧИСЛИТЕЛЬ СДЗ).
  * Brutto - (Больничные + Отпускные).

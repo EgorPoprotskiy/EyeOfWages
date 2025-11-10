@@ -32,8 +32,8 @@ abstract class MonthDatabase: RoomDatabase() {
                     Нужна только на этапе разработки.
    *********************В проде эту опцию надо ОБЯЗАТЕЛЬНО ОТКЛЮЧАТЬ!!!
                      */
-                    .fallbackToDestructiveMigration()
-//                    .addMigrations(MIGRATION_5_6)
+//                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_5_6)
                     .build()
                     //сохраняет созданный экземпляр в переменную instance.
                     .also { instance = it }
