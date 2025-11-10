@@ -18,8 +18,8 @@ android {
         applicationId = "com.egorpoprotskiy.eyeofwages"
         minSdk = 30
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         //Для использование векторных изображений в Compose

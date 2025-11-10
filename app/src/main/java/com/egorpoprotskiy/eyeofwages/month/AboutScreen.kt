@@ -68,6 +68,8 @@ private fun AboutBody(modifier: Modifier = Modifier) {
             InfoSection(
                 title = stringResource(R.string.features_added),
                 content = listOf(
+                    "• Реализован **автоматический расчёт отпускных** (Средний Дневной Заработок - СДЗ) на основе 12 предшествующих месяцев.",
+                    "• Учёт исключаемых сумм (больничные) при расчёте СДЗ.",
                     "• Реализован Pull-to-Refresh на главном экране.",
                     "• Добавлена анимация исчезновения при удалении записи.",
                     "• Добавлен экран 'О приложении'."
@@ -79,6 +81,7 @@ private fun AboutBody(modifier: Modifier = Modifier) {
             InfoSection(
                 title = stringResource(R.string.bug_fixes),
                 content = listOf(
+                    "• **Исправлена проблема миграции БД**, обеспечивающая сохранность данных при обновлении.",
                     "• Исправлена ошибка сброса свайпа при отмене удаления.",
                     "• Улучшена обработка десятичных чисел."
                 )
@@ -89,7 +92,6 @@ private fun AboutBody(modifier: Modifier = Modifier) {
             InfoSection(
                 title = stringResource(R.string.future_plans),
                 content = listOf(
-                    "• Расчёт отпускных (средний дневной заработок).",
                     "• Сохранение данных"
                 )
             )

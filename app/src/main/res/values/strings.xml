@@ -42,7 +42,7 @@
 
     <string name="about_app">О приложении</string>
     <string name="version_label">Версия</string>
-    <string name="version_number">1.2.0</string>
+    <string name="version_number">1.3.0</string>
     <string name="features_added">Добавлено в последних обновлениях</string>
     <string name="bug_fixes">Исправленные ошибки</string>
     <string name="future_plans">Планы на будущее</string>
