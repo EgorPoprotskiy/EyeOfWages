@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.ColumnInfo
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculations
 import com.egorpoprotskiy.eyeofwages.data.MonthRepository
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.time.YearMonth
 import kotlin.String
 import kotlin.text.toDoubleOrNull
 import kotlin.text.toIntOrNull
@@ -25,7 +23,6 @@ import kotlin.text.toIntOrNull
 class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
         private set
-
     private val _yearInput = MutableStateFlow("")
     private val _monthInput = MutableStateFlow("")
     //35
@@ -102,7 +99,6 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
                 calendarResponse?.let {
                     // Используем workHours
                     val parsedNorma = it.month.workingHours.toString() // Или it.calculationInfo?.norma?.replace(" часов", "")
-
                     if (!parsedNorma.isNullOrBlank()) {
                         updateUiState(monthUiState.itemDetails.copy(norma = parsedNorma))
                     } else {
@@ -127,11 +123,9 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
     suspend fun saveItem() {
         // Проверка валидации, если она есть
         if (!validateInput()) return
-
         // 1. Создаем Entity из UI-данных
         val currentMonthEntity = monthUiState.itemDetails.toItem()
         val daysToTake = currentMonthEntity.otpuskDays // Дни отпуска, введенные пользователем
-
         // 2. РАСЧЕТ ЗП (Brutto) для ТЕКУЩЕГО месяца
         // Вызов существующей функции MonthCalculations
         val calculationResults = MonthCalculations(currentMonthEntity)
@@ -164,7 +158,6 @@ class MonthEntryViewModel(private val monthRepository: MonthRepository): ViewMod
             // Если дни не введены, сохраняем 0 или введенную сумму
             currentMonthEntity.otpuskPay
         }
-
         // ---------------------------------------------------------------------
         // 7. СОХРАНЕНИЕ
         // ---------------------------------------------------------------------

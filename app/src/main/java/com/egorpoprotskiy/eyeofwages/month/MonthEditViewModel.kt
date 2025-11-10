@@ -24,9 +24,7 @@ class MonthEditViewModel (
 ) : ViewModel() {
     var monthUiState by mutableStateOf(MonthUiState())
         private set
-
     private val monthId: Int = checkNotNull(savedStateHandle[MonthEditDestination.monthIdArg])
-
     //41 для автоматического обновления нормы часов с сайта (REST API)
     private val _yearInput = MutableStateFlow("")
     private val _monthInput = MutableStateFlow("")
@@ -41,7 +39,6 @@ class MonthEditViewModel (
                 .filterNotNull()
                 .first()
                 .toItemUiState(true)
-
             //41
             _yearInput.value = monthUiState.itemDetails.yearName
             _monthInput.value = monthUiState.itemDetails.monthName
@@ -72,14 +69,12 @@ class MonthEditViewModel (
         }
     }
 
-
     fun updateUiState(itemDetails: MonthDetails) {
         monthUiState = MonthUiState(
             itemDetails = itemDetails,
             isEntryValid = validateInput(itemDetails)
         )
-        //41
-        // Обновляем _yearInput и _monthInput для запуска запроса нормы
+        //41 Обновляем _yearInput и _monthInput для запуска запроса нормы
         if (_yearInput.value != itemDetails.yearName) {
             _yearInput.value = itemDetails.yearName
         }
@@ -96,7 +91,6 @@ class MonthEditViewModel (
                 val calendarResponse = response.body()
                 calendarResponse?.let {
                     val parsedNorma = it.month.workingHours.toString()
-
                     if (!parsedNorma.isNullOrBlank()) {
                         // Важно: проверяем, что полученная норма отличается, чтобы не вызывать лишнее обновление UI
                         if (monthUiState.itemDetails.norma != parsedNorma) {
@@ -124,28 +118,23 @@ class MonthEditViewModel (
     }
 
     suspend fun updateItem() {
+        // Код до расчета отпусных.
 //        if (validateInput(monthUiState.itemDetails)) {
 //            monthRepository.updateMonth(monthUiState.itemDetails.toItem())
 //        }
         if (!validateInput()) return
-
         // 1. Создаем Entity из UI-данных
         val currentMonthEntity = monthUiState.itemDetails.toItem()
         val daysToTake = currentMonthEntity.otpuskDays // Дни отпуска
-
         // 2. РАСЧЕТ ЗП (Brutto) для ТЕКУЩЕГО месяца
         // Используем ВАШУ существующую функцию MonthCalculations
         val calculationResults = MonthCalculations(currentMonthEntity)
         val calculatedBrutto = calculationResults.itogBezNdfl
-
-
         // ---------------------------------------------------------------------
         // НАЧАЛО РАСЧЕТА СДЗ (Для расчета отпускных)
         // ---------------------------------------------------------------------
-
         // 3. Получаем 12 месяцев ИЗ РЕПОЗИТОРИЯ
         val lastMonths = monthRepository.getlist12Month().first()
-
         // 4. ФИЛЬТРАЦИЯ: Исключаем ТЕКУЩУЮ запись из списка для СДЗ
         // (Поскольку это редактирование, мы исключаем ее из расчетного периода)
         val last12MonthsForSdz = lastMonths
@@ -153,27 +142,19 @@ class MonthEditViewModel (
                 !(month.yearName == currentMonthEntity.yearName && month.monthName == currentMonthEntity.monthName)
             }
             .take(12)
-
-
         // 5. РАССЧИТЫВАЕМ ЧИСЛИТЕЛЬ И ЗНАМЕНАТЕЛЬ СДЗ (Используем вспомогательные функции)
         val totalSdzBase = calculateTotalCleanAccrual(last12MonthsForSdz)
         val totalAdjustedDays = calculateTotalAdjustedDays(last12MonthsForSdz)
-
-
         // 6. РАССЧИТЫВАЕМ СДЗ И СУММУ ОТПУСКНЫХ
         val sdz = if (totalAdjustedDays > 0) totalSdzBase / totalAdjustedDays else 0.0
-
         val finalOtpuskPay = if (daysToTake > 0) {
             round2(sdz * daysToTake)
         } else {
             currentMonthEntity.otpuskPay
         }
-
-
         // ---------------------------------------------------------------------
         // 7. СОХРАНЕНИЕ (ОБНОВЛЕНИЕ)
         // ---------------------------------------------------------------------
-
         val monthToSave = currentMonthEntity.copy(
             // ОБЯЗАТЕЛЬНО: Фиксируем рассчитанное Brutto
             itogBezNdfl = calculatedBrutto,
@@ -183,12 +164,10 @@ class MonthEditViewModel (
             // ... (другие рассчитанные поля, такие как itog, ndfl и т.д.)
             itog = calculationResults.itog
         )
-
         // ОБНОВЛЕНИЕ В БД
         monthRepository.updateMonth(monthToSave) // Предполагаем, что у вас есть updateMonth
     }
 }
-
 /**
  * Рассчитывает общую ЧИСТУЮ базу начислений за 12 месяцев (ЧИСЛИТЕЛЬ СДЗ).
  * Brutto - (Больничные + Отпускные).

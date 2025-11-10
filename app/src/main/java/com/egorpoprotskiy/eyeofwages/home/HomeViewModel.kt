@@ -1,6 +1,5 @@
 package com.egorpoprotskiy.eyeofwages.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.egorpoprotskiy.eyeofwages.data.Month
@@ -29,14 +28,12 @@ class HomeViewModel(val monthRepository: MonthRepository) : ViewModel() {
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             initialValue = HomeUiSate()
         )
-
     //Запускает корутину в viewModelScope и вызывает удаление месяца из репозитория (а значит — из базы).
     fun deleteMonth(month: Month) {
         viewModelScope.launch {
             monthRepository.deleteMonth(month)
         }
     }
-
     //Функция обновления данных для PULL-TO-REFRESH
     fun refreshData() {
         viewModelScope.launch {

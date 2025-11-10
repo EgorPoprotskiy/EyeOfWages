@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.Flow
     -использовать разные реализации репозитория (например, одна с Room, другая — с сетью или кешем).
  */
 
-
-
 /*Этот интерфейс MonthRepository определяет контракт (или «договор») для репозитория,
 который работает с сущностью Month. Вот кратко по каждой строчке.
 */
@@ -27,9 +25,7 @@ interface MonthRepository {
     suspend fun deleteMonth(month: Month)
     //Обновляет уже существующую запись.
     suspend fun updateMonth(month: Month)
-
     suspend fun getLastMonth(): Flow<Month?>
-
-//    //Возвращает список из последних 12 месяцев.
+//    Возвращает список из последних 12 месяцев.
     suspend fun getlist12Month(): Flow<List<Month>>
 }

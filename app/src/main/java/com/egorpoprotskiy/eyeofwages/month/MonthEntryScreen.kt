@@ -218,16 +218,6 @@ fun MonthEntryText(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 vislugaOptions.forEach { text ->
-//                    Row(
-//                        modifier = Modifier.weight(1f),
-//                        verticalAlignment = Alignment.CenterVerticallyУ меня есть экран ввода данных, сейчас я тебе его предоставлю..
-//                    ) {
-//                        RadioButton(
-//                            selected = (text == itemDetails.visluga),
-//                            onClick = { itemDetails.visluga = text }
-//                        )
-//                        Text(text = text)
-//                    }
                     Row(
                         modifier = Modifier
                             .weight(1f)
@@ -263,9 +253,6 @@ fun InputText(
     OutlinedTextField(
         value = value,
         onValueChange = {
-//            if (it.all { ch -> ch.isDigit() }) {
-//                onValueChange(it)
-//            }
             // Проверка, что можно ввести только одну десятичную точку.
             val newValue = if (it.count { ch -> ch == '.' } <= 1) {
                 it
@@ -332,8 +319,6 @@ fun InputYearAndMonth(
         )
     )
 }
-
-
 
 @Preview
 @Composable

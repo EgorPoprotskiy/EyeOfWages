@@ -122,12 +122,6 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
-//        PullToRefreshBox(
-//            isRefreshing = isRefreshingState.value,
-//            onRefresh = viewModel::refreshData,
-//            state = pullRefreshState,
-//            modifier = Modifier.fillMaxSize()
-//        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,7 +138,6 @@ fun HomeScreen(
                     }
                 },
                 modifier = Modifier.fillMaxSize(),
-//                contentPadding = innerPadding
             )
             PullRefreshIndicator(
                 refreshing = isRefreshingState.value,
@@ -161,7 +154,6 @@ private fun HomeBody(
     onMonthClick: (Int) -> Unit,
     onSwipeDelete: (Month) -> Unit,
     modifier: Modifier = Modifier,
-//    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -179,7 +171,6 @@ private fun HomeBody(
                 monthList = monthList,
                 onMonthClick = { onMonthClick(it.id)},
                 onSwipeDelete = onSwipeDelete,
-//                contentPadding = contentPadding,
                 modifier = modifier.fillMaxSize()
 
             )
@@ -194,7 +185,6 @@ private fun MonthList(
     monthList: List<Month>,
     onMonthClick: (Month) -> Unit,
     onSwipeDelete: (Month) -> Unit,
-//    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -214,7 +204,6 @@ private fun MonthList(
     Box(modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-//            contentPadding = contentPadding
         ) {
             items(items = monthList, key = { it.id }) { item ->
                 val visible = visibleMap[item.id] ?: true
@@ -299,23 +288,6 @@ private fun MonthList(
 //                            Toast.makeText(context, "Удаляю ID: ${item.id}", Toast.LENGTH_SHORT).show()
                             //42
                             onSwipeDelete(item)
-/*                            // Показываем Snackbar и ждём результата
-                            val result = scope.launch {
-                                val snackbarResult = snackbarHostState.showSnackbar(
-                                    message = "УДАЛИТЬ?",
-                                    actionLabel = "Отмена",
-                                    duration = SnackbarDuration.Short
-                                )
-                                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                                    // Отмена удаления — восстанавливаем элемент
-                                    visibleMap[item.id] = true
-                                    alreadyDismissed.value = false
-                                } else {
-                                    // Подтверждаем удаление
-                                    onSwipeDelete(item)
-                                }
-                            }
- */
                         }
                     }
                     SwipeToDismiss(
@@ -468,8 +440,7 @@ fun MonthListPreview() {
         MonthList(
             fakeMonths,
             onMonthClick = {},
-            onSwipeDelete = {},
-//            contentPadding = PaddingValues(0.dp)
+            onSwipeDelete = {}
         )
     }
 }
@@ -485,8 +456,7 @@ fun MonthBodyPreview() {
         HomeBody(
             fakeMonths,
             onMonthClick = {},
-            onSwipeDelete = {},
-//            contentPadding = PaddingValues(0.dp)
+            onSwipeDelete = {}
         )
     }
 }

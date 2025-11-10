@@ -13,12 +13,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 @Database(entities = [Month::class], version = 6, exportSchema = false)
 abstract class MonthDatabase: RoomDatabase() {
     abstract fun monthDao(): MonthDao //метод, который сообщает Room, какой DAO интерфейс использовать.
-
     //создаёт синглтон базы данных, чтобы использовать один экземпляр в приложении.
     companion object {
         @Volatile //гарантирует, что instance будет всегда читаться из основной памяти, а не из кеша потока. Нужно для многопоточности.
         private var instance: MonthDatabase? = null
-
         //метод, который возвращает готовую базу данных:
         fun getDatabase(context: Context): MonthDatabase {
             return instance ?: synchronized(this) {

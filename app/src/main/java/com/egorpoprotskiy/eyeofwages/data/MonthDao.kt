@@ -16,29 +16,23 @@ interface MonthDao {
     // Определите методы для операций базы данных здесь
     @Insert(onConflict = OnConflictStrategy.IGNORE) //если такой ID уже существует, новая запись не вставляется (конфликт игнорируется).
     suspend fun insert(month: Month)
-
     @Update
     suspend fun update(month: Month)
-
     @Delete
     suspend fun delete(month: Month)
-
     @Query("SELECT * FROM month WHERE id = :id")
     //Получает одну запись с конкретным id.
     fun getMonth(id: Int): Flow<Month?> //Flow<Month?> - можно слушать изменения в реальном времени
-
     //сортировка по id.
 //    @Query("SELECT * FROM Month ORDER BY id ASC")
     //сортировка по году и месяцу.
     @Query("SELECT * FROM Month ORDER BY yearName DESC, monthName DESC")
     //Получает все записи из таблицы Month, отсортированные по id.
     fun getAllMonths(): Flow<List<Month>>
-
     // 35.  НОВЫЙ МЕТОД: Получение последней записи
     @Query("SELECT * FROM month ORDER BY id DESC LIMIT 1")
     fun getLastMonth(): Flow<Month?> // Flow<Month?> потому что записей может и не быть (если БД пуста)
     //Запрос на последние 12 месяцев
     @Query("SELECT * FROM Month ORDER BY yearName DESC, monthName DESC LIMIT 12")
-//    suspend fun getlist12Month(): Flow<Double>
     fun getlist12Month(): Flow<List<Month>>
 }

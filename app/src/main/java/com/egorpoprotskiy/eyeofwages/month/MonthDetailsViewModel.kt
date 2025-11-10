@@ -29,20 +29,6 @@ class MonthDetailsViewModel (
     private val _totalSdzBase = MutableStateFlow(0.0)
     val totalSdzBase: StateFlow<Double> = _totalSdzBase.asStateFlow()
 
-//    val uiState: StateFlow<MonthDetailsUiState> =
-//        monthRepository.getMonthStream(monthId)
-//            .filterNotNull()
-//            .map {
-//                MonthDetailsUiState(outOfStock = it.oklad <= 0, monthDetails = it.toMonthDetails())
-//            }.stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//                initialValue = MonthDetailsUiState()
-//            )
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
-
     suspend fun deleteMonth() {
         monthRepository.deleteMonth(uiState.value.monthDetails.toItem())
     }
@@ -78,7 +64,6 @@ class MonthDetailsViewModel (
         }
     }
 }
-
 
 data class MonthDetailsUiState(
     val outOfStock: Boolean = true,
