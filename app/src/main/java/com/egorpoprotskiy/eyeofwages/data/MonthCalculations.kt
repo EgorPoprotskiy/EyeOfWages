@@ -7,7 +7,14 @@ fun MonthCalculations(
     month: Month
 ): MonthCalculateData {
     //Для отпуска
-    val bolnichniy = month.bolnichniy
+    val bolnichniy = month.bolnichniy //вычитается из расчета отпускных
+    val otherPaymentIzRaschetki = month.otherPayments //другие выплаты(учитываются в отпускных)
+    val otherPayment = otherPaymentIzRaschetki + (
+            otherPaymentIzRaschetki * 0.1 +
+            otherPaymentIzRaschetki * 0.2 +
+            otherPaymentIzRaschetki * 0.3
+            )
+
 
     val oneChasDenRub = if (month.norma != 0) month.oklad / month.norma else 0.0
     val oneChasNochRub = oneChasDenRub * 0.4
@@ -42,7 +49,7 @@ fun MonthCalculations(
     val rayon10 = base * 0.1
 
 //    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen // для расчета дохода за 12 месяцев
-    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen
+    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen + otherPayment
 //    otpuskPay = otpuskPay - (otpuskPay * 0.13) //вычитаем налог для отображения на экране деталей
     val ndfl = itogBezNdfl * 0.13 //расчет налога со всех доходов.
     val itog = itogBezNdfl - ndfl //итоговая сумма вместе с отпускными(после налогов)
