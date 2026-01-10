@@ -172,7 +172,6 @@ private fun HomeBody(
                 onMonthClick = { onMonthClick(it.id)},
                 onSwipeDelete = onSwipeDelete,
                 modifier = modifier.fillMaxSize()
-
             )
         }
     }
@@ -407,6 +406,7 @@ fun MonthItemPreview() {
         bolnichniy = 777.0,
         otpuskDays = 7,
         otpuskPay = 777.0,
+        otherPayments = 50000.0
     )
     val raschet = MonthCalculateData(
         rabTimeRub = 1000.0,
@@ -433,8 +433,8 @@ fun MonthItemPreview() {
 @Composable
 fun MonthListPreview() {
     val fakeMonths = listOf(
-        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0),
-        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0)
+        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0, 50000.0),
+        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0, 50000.0)
     )
     MaterialTheme {
         MonthList(
@@ -449,8 +449,8 @@ fun MonthListPreview() {
 @Composable
 fun MonthBodyPreview() {
     val fakeMonths = listOf(
-        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0),
-        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0)
+        Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0, 50000.0),
+        Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0, 50000.0)
     )
     MaterialTheme {
         HomeBody(

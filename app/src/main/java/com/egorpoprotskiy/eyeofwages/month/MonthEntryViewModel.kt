@@ -235,7 +235,8 @@ data class MonthDetails(
     val bolnichniy: String = "", // Сумма, исключаемая из СДЗ (Больничные, пособия)
 //    val inputOtpuskDay: String = ""
     val otpuskDays: String = "", // Дни отпуска (если ввод <= 39)
-    val otpuskPay: String = "" // Сумма отпускных (введенная или рассчитанная)
+    val otpuskPay: String = "", // Сумма отпускных (введенная или рассчитанная)
+    val otherPayments: String = ""
 
 )
 
@@ -256,7 +257,8 @@ fun MonthDetails.toItem(): Month = Month (
     itogBezNdfl = itogBezNdfl.toDoubleOrNull() ?: 0.0,
     bolnichniy = bolnichniy.toDoubleOrNull() ?: 0.0,
     otpuskDays = otpuskDays.toIntOrNull() ?: 0,
-    otpuskPay = otpuskPay.toDoubleOrNull() ?: 0.0
+    otpuskPay = otpuskPay.toDoubleOrNull() ?: 0.0,
+    otherPayments = otherPayments.toDoubleOrNull() ?: 0.0
 )
 
 fun Month.toItemUiState(isEntryValid: Boolean = false): MonthUiState = MonthUiState(

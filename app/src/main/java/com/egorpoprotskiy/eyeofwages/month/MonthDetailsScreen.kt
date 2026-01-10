@@ -312,7 +312,8 @@ fun MonthDetailsScreenLightPreview() {
                 itogBezNdfl = 777.0,
                 bolnichniy = 777.0,
                 otpuskDays = 777,
-                otpuskPay = 777.0
+                otpuskPay = 777.0,
+                otherPayments = 50000.0
             ),
             calculated = MonthCalculateData(
                 rabTimeRub = 50000.0,
@@ -353,7 +354,8 @@ fun MonthDetailsScreenDarkPreview() {
                 itogBezNdfl = 777.0,
                 bolnichniy = 777.0,
                 otpuskDays = 777,
-                otpuskPay = 777.0
+                otpuskPay = 777.0,
+                otherPayments = 50000.0
             ),
             calculated = MonthCalculateData(
                 rabTimeRub = 50000.0,

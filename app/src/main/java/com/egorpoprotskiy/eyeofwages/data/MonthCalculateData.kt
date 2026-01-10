@@ -21,4 +21,6 @@ data class MonthCalculateData(
     val otpuskDays: Double = 0.0, // Дни отпуска (если ввод <= 39)
     val otpuskPay: Double = 0.0, // Сумма отпускных (введенная или рассчитанная)
 
+    val otherPaymentsRub: Double = 0.0
+
 )

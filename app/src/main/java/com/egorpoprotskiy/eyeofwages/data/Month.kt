@@ -39,5 +39,7 @@ data class Month(
     @ColumnInfo(name = "votpuskDays")
     val otpuskDays: Int, // Дни отпуска (если ввод <= 39)
     @ColumnInfo(name = "otpuskPay")
-    val otpuskPay: Double // Сумма отпускных (введенная или рассчитанная)
+    val otpuskPay: Double, // Сумма отпускных (введенная или рассчитанная)
+    @ColumnInfo(name = "otherPayments") //Сумма премий, переработок за год и остальных разных доплат
+    val otherPayments: Double
 )
