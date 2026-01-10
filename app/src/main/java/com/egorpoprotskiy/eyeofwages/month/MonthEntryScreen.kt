@@ -192,6 +192,11 @@ fun MonthEntryText(
             stringResource(R.string.premia)
         )
         InputText(
+            itemDetails.otherPayments,
+            onValueChange = {onItemValueChange(itemDetails.copy(otherPayments = it))},
+            stringResource(R.string.other_payments)
+        )
+        InputText(
             itemDetails.bolnichniy,
             onValueChange = {onItemValueChange(itemDetails.copy(bolnichniy = it))},
             stringResource(R.string.bolnichniy)
@@ -336,6 +341,7 @@ fun MonthEntreScreenPreview() {
                     visluga = "0",
                     prikazDen = "0",
                     prikazNoch = "0",
+                    otherPayments = "0",
                     itog = "10000", // Возможно, itog здесь не нужен для ввода, если он вычисляется
                     bolnichniy = "777",
                     otpuskPay = "777.0"

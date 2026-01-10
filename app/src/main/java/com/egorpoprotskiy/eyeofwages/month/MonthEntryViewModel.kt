@@ -284,4 +284,5 @@ fun Month.toMonthDetails(): MonthDetails = MonthDetails(
     bolnichniy = bolnichniy.toString(),
     otpuskDays = otpuskDays.toString(),
     otpuskPay = otpuskPay.toString(),
+    otherPayments = otherPayments.toString()
 )

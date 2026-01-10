@@ -197,6 +197,16 @@ fun MonthDetails(
             )
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
+                labelDetails = stringResource(R.string.other_payments),
+                monthDetails = month.otherPayments
+            )
+            HorizontalDivider(thickness = 1.dp)
+            MonthDetailsRow(
+                labelDetails = stringResource(R.string.itog_bez_ndfl),
+                monthDetails = calculated.itogBezNdfl
+            )
+            HorizontalDivider(thickness = 1.dp)
+            MonthDetailsRow(
                 labelDetails = stringResource(R.string.bolnichniy_detail),
                 monthDetails = calculated.bolnichniy
             )
@@ -209,11 +219,6 @@ fun MonthDetails(
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.total_accrual_12_months),
                 monthDetails = totalSdzBase
-            )
-            HorizontalDivider(thickness = 1.dp)
-            MonthDetailsRow(
-                labelDetails = stringResource(R.string.itog_bez_ndfl),
-                monthDetails = calculated.itogBezNdfl
             )
             HorizontalDivider(thickness = 7.dp)
             Column (
@@ -325,6 +330,7 @@ fun MonthDetailsScreenLightPreview() {
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
                 vislugaRub = 2000.0,
+                otherPaymentsRub = 50000.0,
                 itog = 80000.0,
             ),
             totalSdzBase = 777.0,
@@ -367,6 +373,7 @@ fun MonthDetailsScreenDarkPreview() {
                 severn30 = 15000.0,
                 rayon10 = 5000.0,
                 vislugaRub = 2000.0,
+                otherPaymentsRub = 50000.0,
                 itog = 80000.0,
                 itogBezNdfl = 10000.0
             ),
