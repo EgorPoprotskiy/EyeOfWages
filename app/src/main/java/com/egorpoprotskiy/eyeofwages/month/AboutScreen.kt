@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.R
@@ -68,7 +69,16 @@ private fun AboutBody(modifier: Modifier = Modifier) {
             InfoSection(
                 title = stringResource(R.string.features_added),
                 content = listOf(
-                    "• Реализован **автоматический расчёт отпускных** (Средний Дневной Заработок - СДЗ) на основе 12 предшествующих месяцев.",
+                    "• Добавлено поле для дополнительных выплат(премия и т.п.)",
+                )
+            )
+        }
+        //Секция "Новые функции"
+        item {
+            InfoSection(
+                title = stringResource(R.string.prev_features_added),
+                content = listOf(
+                    "• Реализован автоматический расчёт отпускных (Средний Дневной Заработок - СДЗ) на основе 12 предшествующих месяцев.",
                     "• Учёт исключаемых сумм (больничные) при расчёте СДЗ.",
                     "• Реализован Pull-to-Refresh на главном экране.",
                     "• Добавлена анимация исчезновения при удалении записи.",
@@ -81,7 +91,7 @@ private fun AboutBody(modifier: Modifier = Modifier) {
             InfoSection(
                 title = stringResource(R.string.bug_fixes),
                 content = listOf(
-                    "• **Исправлена проблема миграции БД**, обеспечивающая сохранность данных при обновлении.",
+                    "• Исправлена проблема миграции БД, обеспечивающая сохранность данных при обновлении.",
                     "• Исправлена ошибка сброса свайпа при отмене удаления.",
                     "• Улучшена обработка десятичных чисел."
                 )
@@ -120,4 +130,10 @@ private fun InfoSection(title: String, content: List<String>) {
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider()
     }
+}
+
+@Preview
+@Composable
+fun AboutScreenPreview() {
+    AboutBody()
 }
