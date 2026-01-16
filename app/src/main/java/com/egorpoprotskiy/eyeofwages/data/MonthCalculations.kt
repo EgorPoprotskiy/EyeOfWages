@@ -57,6 +57,9 @@ fun MonthCalculations(
     val aliments25 = itog * 0.25
     val aliments75 = itog * 0.75
 
+    //Отпускные после налогов
+    val otpuskPayNetto = month.otpuskPay * 0.87
+
     fun calculateVacation(last12Itogs: List<Double>, otpuskDen: Int): Double {
         val sredniyDenInMonth = 29.3
         val sredniy = last12Itogs.sum() / (12 * sredniyDenInMonth)
@@ -79,8 +82,12 @@ fun MonthCalculations(
         aliments25 = round2(aliments25),
         aliments75 = round2(aliments75),
         itogBezNdfl =  round2(itogBezNdfl),
-
         bolnichniy = round2(bolnichniy), // Сумма, исключаемая из СДЗ (Больничные, пособия)
+
+
+        otpuskDays = month.otpuskDays.toDouble(), // Дни отпуска (если ввод <= 39)
+        otpuskPay = round2(otpuskPayNetto),
+        otherPaymentsRub = round2(otherPayment)
     )
 }
 

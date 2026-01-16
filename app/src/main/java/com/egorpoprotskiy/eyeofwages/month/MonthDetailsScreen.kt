@@ -213,7 +213,8 @@ fun MonthDetails(
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.otpuskPay_detail),
-                monthDetails = month.otpuskPay
+//                monthDetails = month.otpuskPay
+                monthDetails = calculated.otpuskPay
             )
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(

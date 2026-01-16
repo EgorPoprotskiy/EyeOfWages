@@ -22,5 +22,4 @@ data class MonthCalculateData(
     val otpuskPay: Double = 0.0, // Сумма отпускных (введенная или рассчитанная)
 
     val otherPaymentsRub: Double = 0.0
-
 )
