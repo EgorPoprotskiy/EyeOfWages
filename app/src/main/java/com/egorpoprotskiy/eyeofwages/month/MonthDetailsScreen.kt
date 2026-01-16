@@ -46,6 +46,9 @@ import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.data.Month
 import com.egorpoprotskiy.eyeofwages.data.MonthCalculateData
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.roundToInt
 
 object MonthDetailsDestination : NavigationDestination {
     override val route = "month_details"
@@ -93,7 +96,8 @@ fun MonthDetailsScreen(
         MonthDetailsBody(
             month = uiState.value.monthDetails.toItem(),
             calculated = calcState,
-            totalSdzBase = totalSdzBase,
+            // Сумма зараблтка за год. Сразу же с функцией округления до 2-х знаков после запятой.
+            totalSdzBase = BigDecimal(totalSdzBase).setScale(2, RoundingMode.HALF_UP).toDouble(),
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
