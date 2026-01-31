@@ -202,7 +202,7 @@ fun MonthDetails(
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
                 labelDetails = stringResource(R.string.other_payments),
-                monthDetails = month.otherPayments
+                monthDetails = calculated.otherPaymentsRub
             )
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
@@ -216,16 +216,15 @@ fun MonthDetails(
             )
             HorizontalDivider(thickness = 1.dp)
             MonthDetailsRow(
-                labelDetails = stringResource(R.string.otpuskPay_detail),
-//                monthDetails = month.otpuskPay
-                monthDetails = calculated.otpuskPay
-            )
-            HorizontalDivider(thickness = 1.dp)
-            MonthDetailsRow(
                 labelDetails = stringResource(R.string.total_accrual_12_months),
                 monthDetails = totalSdzBase
             )
             HorizontalDivider(thickness = 7.dp)
+            MonthDetailsRow(
+                labelDetails = stringResource(R.string.otpuskPay_detail),
+//                monthDetails = month.otpuskPay
+                monthDetails = calculated.otpuskPay
+            )
             Column (
                 modifier = Modifier
                     .fillMaxSize()

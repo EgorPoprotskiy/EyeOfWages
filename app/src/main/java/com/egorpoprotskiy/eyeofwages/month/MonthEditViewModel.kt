@@ -179,20 +179,40 @@ private fun calculateTotalCleanAccrual(last12Months: List<Month>): Double {
         // Выплаты, не идущие в СДЗ:
         val nonSDZAccruals = month.bolnichniy + month.otpuskPay
         // Чистая база для СДЗ
-        month.itogBezNdfl - nonSDZAccruals
+//        month.itogBezNdfl - nonSDZAccruals
+        month.itogBezNdfl
     }
 }
 /**
  * Рассчитывает Общее скорректированное количество календарных дней (ЗНАМЕНАТЕЛЬ СДЗ).
  * 29.3 * (Отработанные часы / Норма часов).
  */
+//private fun calculateTotalAdjustedDays(last12Months: List<Month>): Double {
+//    val AVG_CALENDAR_DAYS = 29.3
+//    if (last12Months.isEmpty()) return 0.0
+//
+//    return last12Months.sumOf { month ->
+//        if (month.norma == 0) 0.0 else {
+//            AVG_CALENDAR_DAYS * (month.rabTime.toDouble() / month.norma.toDouble())
+//        }
+//    }
+//}
 private fun calculateTotalAdjustedDays(last12Months: List<Month>): Double {
     val AVG_CALENDAR_DAYS = 29.3
     if (last12Months.isEmpty()) return 0.0
 
     return last12Months.sumOf { month ->
-        if (month.norma == 0) 0.0 else {
+        // Если отработал норму или больше — засчитываем полные 29.3
+        if (month.rabTime >= month.norma && month.norma > 0) {
+            AVG_CALENDAR_DAYS
+        } else if (month.norma > 0) {
+            // Если НЕ доработал (был больничный или отпуск),
+            // считаем пропорцию от календарных дней.
+            // Приблизительно: (часы / норма) * 29.3
+            // Это точнее, чем просто делить часы, если были переработки
             AVG_CALENDAR_DAYS * (month.rabTime.toDouble() / month.norma.toDouble())
+        } else {
+            0.0
         }
     }
 }

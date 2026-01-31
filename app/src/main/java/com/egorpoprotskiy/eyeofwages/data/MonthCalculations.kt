@@ -50,6 +50,7 @@ fun MonthCalculations(
 
 //    val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen // для расчета дохода за 12 месяцев
     val itogBezNdfl = base + rayon20 + severn30 + rayon10 + prikazNoch + prikazDen + otherPayment
+//    + month.otpuskPay // Добавляет сумму отпускных к итоговой выплате.
 //    otpuskPay = otpuskPay - (otpuskPay * 0.13) //вычитаем налог для отображения на экране деталей
     val ndfl = itogBezNdfl * 0.13 //расчет налога со всех доходов.
     val itog = itogBezNdfl - ndfl //итоговая сумма вместе с отпускными(после налогов)
@@ -87,7 +88,7 @@ fun MonthCalculations(
 
         otpuskDays = month.otpuskDays.toDouble(), // Дни отпуска (если ввод <= 39)
         otpuskPay = round2(otpuskPayNetto),
-        otherPaymentsRub = round2(otherPayment)
+        otherPaymentsRub = round2(otherPayment*0.87)
     )
 }
 
