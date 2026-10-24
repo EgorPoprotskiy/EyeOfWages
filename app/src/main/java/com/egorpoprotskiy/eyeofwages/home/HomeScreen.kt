@@ -7,14 +7,16 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,8 +60,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -166,30 +174,39 @@ private fun HomeBody(
     onSwipeDelete: (Month) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier.padding(horizontal = 16.dp)
-    ) {
-        // Сводная карточка показывает последний сохранённый расчёт без изменения данных в БД.
-        SalaryOverviewCard(monthList = monthList)
+    // Заголовок, график, статистика и список используют один LazyColumn,
+    // поэтому список остаётся доступен даже на небольших экранах.
+    MonthList(
+        monthList = monthList,
+        onMonthClick = { onMonthClick(it.id) },
+        onSwipeDelete = onSwipeDelete,
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
+        header = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Сводная карточка показывает последний сохранённый расчёт.
+                SalaryOverviewCard(monthList = monthList)
 
-        if (monthList.isEmpty()) {
-            Text(
-                text = "Добавь первый месяц, чтобы здесь появилась история зарплаты.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
-            )
-        } else {
-            MonthList(
-                monthList = monthList,
-                onMonthClick = { onMonthClick(it.id) },
-                onSwipeDelete = onSwipeDelete,
-                modifier = Modifier.weight(1f).fillMaxWidth()
-            )
+                if (monthList.size >= 2) {
+                    SalaryHistoryChart(monthList = monthList)
+                }
+
+                if (monthList.isNotEmpty()) {
+                    SalaryStatsCard(monthList = monthList)
+                } else {
+                    Text(
+                        text = "Добавь первый месяц, чтобы здесь появилась история зарплаты.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
+                    )
+                }
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -245,6 +262,356 @@ private fun SalaryOverviewCard(monthList: List<Month>) {
     }
 }
 
+@Composable
+private fun SalaryStatsCard(monthList: List<Month>) {
+    // Статистика рассчитывается из уже сохранённых месяцев и не меняет данные в базе.
+    val sortedMonths = monthList.sortedWith(
+        compareBy<Month> { it.yearName }.thenBy { it.monthName }
+    )
+    val salaries = sortedMonths.map { MonthCalculations(it).itog }
+    val averageSalary = salaries.average()
+    val minSalary = salaries.minOrNull() ?: 0.0
+    val maxSalary = salaries.maxOrNull() ?: 0.0
+    val latestSalary = salaries.lastOrNull()
+    val previousSalary = salaries.getOrNull(salaries.lastIndex - 1)
+    val difference = if (latestSalary != null && previousSalary != null) {
+        latestSalary - previousSalary
+    } else null
+    val percentChange = if (difference != null && previousSalary != null && previousSalary != 0.0) {
+        difference / kotlin.math.abs(previousSalary) * 100.0
+    } else null
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(
+                text = "СТАТИСТИКА ЗАРПЛАТЫ",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.SemiBold
+            )
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                SalaryStatItem(
+                    title = "Средняя",
+                    value = formatRubles(averageSalary),
+                    modifier = Modifier.weight(1f)
+                )
+                SalaryStatItem(
+                    title = "Максимум",
+                    value = formatRubles(maxSalary),
+                    modifier = Modifier.weight(1f)
+                )
+                SalaryStatItem(
+                    title = "Минимум",
+                    value = formatRubles(minSalary),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "Изменение к предыдущему месяцу",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                if (difference != null) {
+                    val sign = if (difference > 0.0) "+" else if (difference < 0.0) "−" else ""
+                    val percentText = percentChange?.let {
+                        " (${if (it > 0) "+" else ""}${String.format(Locale("ru", "RU"), "%.1f", it)}%)"
+                    } ?: ""
+                    val changeColor = when {
+                        difference > 0.0 -> Color(0xFF16845B)
+                        difference < 0.0 -> MaterialTheme.colorScheme.error
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                    val changeSymbol = when {
+                        difference > 0.0 -> "↑"
+                        difference < 0.0 -> "↓"
+                        else -> "→"
+                    }
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                color = changeColor.copy(alpha = 0.10f),
+                                shape = RoundedCornerShape(14.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = changeSymbol,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = changeColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = "$sign${formatRubles(kotlin.math.abs(difference))}$percentText",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = changeColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = when {
+                                    difference > 0.0 -> "Зарплата выросла"
+                                    difference < 0.0 -> "Зарплата снизилась"
+                                    else -> "Без изменений"
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "Добавь ещё один месяц для сравнения",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SalaryStatItem(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 2
+        )
+    }
+}
+
+@Composable
+private fun SalaryHistoryChart(monthList: List<Month>) {
+    // Период хранится только в состоянии интерфейса и не меняет сохранённые данные.
+    var selectedPeriod by rememberSaveable { mutableStateOf("6") }
+    var selectedPointIndex by rememberSaveable { mutableStateOf(0) }
+    val sortedMonths = monthList.sortedWith(
+        compareBy<Month> { it.yearName }.thenBy { it.monthName }
+    )
+    val selectedMonths = when (selectedPeriod) {
+        "3" -> sortedMonths.takeLast(3)
+        "6" -> sortedMonths.takeLast(6)
+        "12" -> sortedMonths.takeLast(12)
+        else -> sortedMonths
+    }
+    val history = selectedMonths.map { month ->
+        month.monthName to MonthCalculations(month).itog
+    }
+    // Показываем ограниченное число подписей, чтобы они не накладывались друг на друга.
+    val labelStep = ((selectedMonths.size + 5) / 6).coerceAtLeast(1)
+    val monthLabels = selectedMonths.mapIndexed { index, month ->
+        val isFirst = index == 0
+        val isLast = index == selectedMonths.lastIndex
+        val isYearChange = index > 0 &&
+            selectedMonths[index - 1].yearName != month.yearName
+        if (isFirst || isLast || index % labelStep == 0 || isYearChange) {
+            // monthName хранится в базе как число от 1 до 12, поэтому преобразуем его в короткое название.
+            val shortMonth = listOf(
+                "Янв", "Фев", "Мар", "Апр", "Май", "Июн",
+                "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"
+            ).getOrNull(month.monthName - 1) ?: month.monthName.toString()
+            if (isFirst || isYearChange || isLast) "$shortMonth ${month.yearName}" else shortMonth
+        } else {
+            ""
+        }
+    }
+
+    if (history.size < 2) return
+
+    val values = history.map { it.second }
+    val activeIndex = selectedPointIndex.coerceIn(0, history.lastIndex)
+    val activeMonth = history[activeIndex]
+    val minValue = minOf(0.0, values.minOrNull() ?: 0.0)
+    val maxValue = values.maxOrNull() ?: 0.0
+    val range = (maxValue - minValue).takeIf { it > 0.0 } ?: 1.0
+
+    // Читаем цвета темы в composable-контексте, до входа в Canvas DrawScope.
+    val chartColor = MaterialTheme.colorScheme.primary
+    val baselineColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f)
+    val pointFillColor = MaterialTheme.colorScheme.surfaceContainerLow
+    val chipSelectedColor = MaterialTheme.colorScheme.primaryContainer
+    val chipUnselectedColor = MaterialTheme.colorScheme.surfaceVariant
+    val chipSelectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val chipUnselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "ДИНАМИКА ЗАРПЛАТЫ",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                listOf("3", "6", "12", "Всё").forEach { period ->
+                    val selected = selectedPeriod == period
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(
+                                color = if (selected) chipSelectedColor else chipUnselectedColor,
+                                shape = RoundedCornerShape(50)
+                            )
+                            .clickable {
+                        selectedPeriod = period
+                        selectedPointIndex = 0
+                    }
+                            .padding(vertical = 9.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (period == "Всё") period else "$period мес.",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (selected) chipSelectedTextColor else chipUnselectedTextColor,
+                            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                        )
+                    }
+                }
+            }
+
+            Text(
+                text = "Показано месяцев: ${history.size}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+                    .height(112.dp)
+                    .pointerInput(history) {
+                        detectTapGestures { tap ->
+                            // Выбираем точку, ближайшую к месту касания по горизонтали.
+                            val horizontalPadding = 8.dp.toPx()
+                            val chartWidth = size.width - horizontalPadding * 2
+                            val relativeX = (tap.x - horizontalPadding).coerceIn(0f, chartWidth)
+                            val nearestIndex = (relativeX / chartWidth * (history.size - 1))
+                                .toInt()
+                                .coerceIn(0, history.lastIndex)
+                            selectedPointIndex = nearestIndex
+                        }
+                    }
+            ) {
+                val horizontalPadding = 8.dp.toPx()
+                val verticalPadding = 10.dp.toPx()
+                val chartWidth = size.width - horizontalPadding * 2
+                val chartHeight = size.height - verticalPadding * 2
+                val points = values.mapIndexed { index, value ->
+                    val x = horizontalPadding + chartWidth * index / (values.size - 1)
+                    val y = verticalPadding + chartHeight * (1f - ((value - minValue) / range).toFloat())
+                    Offset(x, y)
+                }
+
+                drawLine(
+                    color = baselineColor,
+                    start = Offset(horizontalPadding, size.height - verticalPadding),
+                    end = Offset(size.width - horizontalPadding, size.height - verticalPadding),
+                    strokeWidth = 1.dp.toPx()
+                )
+                val path = Path().apply {
+                    moveTo(points.first().x, points.first().y)
+                    points.drop(1).forEach { lineTo(it.x, it.y) }
+                }
+                drawPath(
+                    path = path,
+                    color = chartColor,
+                    style = Stroke(width = 3.dp.toPx())
+                )
+                points.forEachIndexed { index, point ->
+                    // У выбранного месяца точка крупнее, чтобы выделить его на графике.
+                    drawCircle(
+                        color = chartColor,
+                        radius = if (index == activeIndex) 6.dp.toPx() else 4.dp.toPx(),
+                        center = point
+                    )
+                    drawCircle(
+                        color = pointFillColor,
+                        radius = if (index == activeIndex) 2.8.dp.toPx() else 1.8.dp.toPx(),
+                        center = point
+                    )
+                }
+            }
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                monthLabels.forEach { label ->
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    text = activeMonth.first.toString(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = formatRubles(activeMonth.second),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                text = "Максимум за период: ${formatRubles(maxValue)}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
 private fun formatRubles(value: Double): String {
     val formatter = NumberFormat.getCurrencyInstance(Locale("ru", "RU"))
     formatter.currency = Currency.getInstance("RUB")
@@ -260,10 +627,32 @@ private fun MonthList(
     monthList: List<Month>,
     onMonthClick: (Month) -> Unit,
     onSwipeDelete: (Month) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    header: @Composable () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    // Локальный поиск по названию месяца и году не меняет сохранённые данные.
+    var monthSearchQuery by rememberSaveable { mutableStateOf("") }
+    // Пользователь может менять порядок истории, не меняя сохранённые записи.
+    var newestFirst by rememberSaveable { mutableStateOf(true) }
+    val monthNames = listOf(
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    )
+    val filteredMonthList = remember(monthList, monthSearchQuery, newestFirst) {
+        val query = monthSearchQuery.trim().lowercase(Locale("ru", "RU"))
+        val matchingMonths = if (query.isBlank()) monthList else monthList.filter { month ->
+            val monthLabel = monthNames.getOrNull(month.monthName - 1)
+                ?: month.monthName.toString()
+            monthLabel.lowercase(Locale("ru", "RU")).contains(query) ||
+                month.yearName.toString().contains(query)
+        }
+        val chronological = matchingMonths.sortedWith(
+            compareBy<Month> { it.yearName }.thenBy { it.monthName }
+        )
+        if (newestFirst) chronological.reversed() else chronological
+    }
 
     // Состояния видимости для каждого элемента по id
     val visibleMap = remember { mutableStateMapOf<Int, Boolean>() }
@@ -280,7 +669,45 @@ private fun MonthList(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
-            items(items = monthList, key = { it.id }) { item ->
+            item(key = "home_header") {
+                header()
+            }
+            item(key = "month_search") {
+                OutlinedTextField(
+                    value = monthSearchQuery,
+                    onValueChange = { monthSearchQuery = it },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    singleLine = true,
+                    label = { Text("Поиск по месяцу или году") },
+                    placeholder = { Text("Например, Октябрь или 2026") },
+                    shape = RoundedCornerShape(16.dp)
+                )
+            }
+            item(key = "month_sort_controls") {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = { newestFirst = true }, enabled = !newestFirst) {
+                        Text("Сначала новые")
+                    }
+                    TextButton(onClick = { newestFirst = false }, enabled = newestFirst) {
+                        Text("Сначала старые")
+                    }
+                }
+            }
+            if (filteredMonthList.isEmpty() && monthList.isNotEmpty()) {
+                item(key = "month_search_empty") {
+                    Text(
+                        text = "Ничего не найдено. Попробуй изменить запрос.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)
+                    )
+                }
+            }
+            items(items = filteredMonthList, key = { it.id }) { item ->
                 val visible = visibleMap[item.id] ?: true
                 //9 Защита от повторного свайпа при настройках анимации.
 //                val alreadyDismissed = remember { mutableStateOf(false) }
@@ -436,9 +863,15 @@ fun MonthItem(
     calculated: MonthCalculateData,
     modifier: Modifier = Modifier
 ) {
+    // Преобразуем номер месяца из модели в короткое русское название для списка.
+    val monthLabel = listOf(
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    ).getOrNull(month.monthName - 1) ?: month.monthName.toString()
+
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             contentColor = MaterialTheme.colorScheme.onSurface
@@ -448,23 +881,29 @@ fun MonthItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 18.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            //Строка с месяцем и годом.
-            Text(
-//                text = "2024, Апрель:",
-                text = "${month.yearName}, ${month.monthName}",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.SemiBold,
-            )
-            //Разделитель
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f),
-                thickness = 1.dp
-            )
-            //Строка с итоговой выплатой.
+            // Верхняя строка помогает быстро найти нужный месяц и год.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = monthLabel,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = month.yearName.toString(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Итоговая выплата визуально отделена от подписи месяца.
             Text(
                 text = formatRubles(calculated.itog),
                 style = MaterialTheme.typography.headlineSmall,
@@ -530,7 +969,8 @@ fun MonthListPreview() {
         MonthList(
             fakeMonths,
             onMonthClick = {},
-            onSwipeDelete = {}
+            onSwipeDelete = {},
+            header = {}
         )
     }
 }
