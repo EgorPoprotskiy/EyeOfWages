@@ -2,16 +2,20 @@ package com.egorpoprotskiy.eyeofwages.month
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -33,6 +37,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -61,6 +66,8 @@ fun MonthEntryScreen(
     val coroutineScope = rememberCoroutineScope()
     //Scaffold для создания макета с верхней панелью(topBar)
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MonthTopAppBar(
@@ -111,10 +118,11 @@ fun MonthEntryBody(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .heightIn(min = 56.dp)
+                .padding(horizontal = 4.dp, vertical = 4.dp),
             onClick = onSaveClick,
             enabled = itemUiState.isEntryValid,
-            shape = MaterialTheme.shapes.small,
+            shape = RoundedCornerShape(18.dp),
         ) {
             Text(text = stringResource(R.string.raschet))
         }
@@ -128,118 +136,101 @@ fun MonthEntryText(
     onItemValueChange: (MonthDetails) -> Unit = {}
 ) {
     Column(
-        modifier = modifier
-            //отступы внутри Column
-            .padding(10.dp)
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            InputYearAndMonth(
-                itemDetails.yearName,
-                onValueChange = { onItemValueChange(itemDetails.copy(yearName = it)) },
-                stringResource(R.string.yearName),
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            InputYearAndMonth(
-                itemDetails.monthName,
-                onValueChange = { onItemValueChange(itemDetails.copy(monthName = it)) },
-                stringResource(R.string.monthName),
-                modifier = Modifier.weight(1f)
-            )
-        }
-        InputText(
-            itemDetails.oklad,
-            onValueChange = {onItemValueChange(itemDetails.copy(oklad = it))},
-            stringResource(R.string.oklad)
-        )
-        InputText(
-            itemDetails.norma,
-            onValueChange = {onItemValueChange(itemDetails.copy(norma = it))},
-            stringResource(R.string.norma)
-        )
-        InputText(
-            itemDetails.rabTime,
-            onValueChange = {onItemValueChange(itemDetails.copy(rabTime = it))},
-            stringResource(R.string.rab_time_chas)
-        )
-        InputText(
-            itemDetails.nochTime,
-            onValueChange = {onItemValueChange(itemDetails.copy(nochTime = it))},
-            stringResource(R.string.noch_time_chas)
-        )
-        InputText(
-            itemDetails.prazdTime,
-            onValueChange = {onItemValueChange(itemDetails.copy(prazdTime = it))},
-            stringResource(R.string.prazd_time_chas)
-        )
-        InputText(
-            itemDetails.prikazDen,
-            onValueChange = {onItemValueChange(itemDetails.copy(prikazDen = it))},
-            stringResource(R.string.prikaz_den)
-        )
-        InputText(
-            itemDetails.prikazNoch,
-            onValueChange = {onItemValueChange(itemDetails.copy(prikazNoch = it))},
-            stringResource(R.string.prikaz_noch)
-        )
-        InputText(
-            itemDetails.premia,
-            onValueChange = {onItemValueChange(itemDetails.copy(premia = it))},
-            stringResource(R.string.premia)
-        )
-        InputText(
-            itemDetails.otherPayments,
-            onValueChange = {onItemValueChange(itemDetails.copy(otherPayments = it))},
-            stringResource(R.string.other_payments)
-        )
-        InputText(
-            itemDetails.bolnichniy,
-            onValueChange = {onItemValueChange(itemDetails.copy(bolnichniy = it))},
-            stringResource(R.string.bolnichniy)
-        )
-        InputText(
-            itemDetails.otpuskDays,
-            onValueChange = {onItemValueChange(itemDetails.copy(otpuskDays = it))},
-            stringResource(R.string.otpuskDays_detail)
-        )
-        InputText(
-            itemDetails.otpuskPay,
-            onValueChange = {onItemValueChange(itemDetails.copy(otpuskPay = it))},
-            stringResource(R.string.otpuskPay_detail)
-        )
-        val vislugaOptions = listOf("0", "5", "10", "15")
-        Column {
-            Text(
-                text = stringResource(R.string.visluga_let),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
+        EntrySection(title = "Период расчёта") {
             Row(
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                vislugaOptions.forEach { text ->
+                InputYearAndMonth(
+                    value = itemDetails.yearName,
+                    onValueChange = { onItemValueChange(itemDetails.copy(yearName = it)) },
+                    label = stringResource(R.string.yearName),
+                    modifier = Modifier.weight(1f)
+                )
+                InputYearAndMonth(
+                    value = itemDetails.monthName,
+                    onValueChange = { onItemValueChange(itemDetails.copy(monthName = it)) },
+                    label = stringResource(R.string.monthName),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        EntrySection(title = "Основные данные") {
+            InputText(itemDetails.oklad, { onItemValueChange(itemDetails.copy(oklad = it)) }, stringResource(R.string.oklad))
+            InputText(itemDetails.norma, { onItemValueChange(itemDetails.copy(norma = it)) }, stringResource(R.string.norma))
+            InputText(itemDetails.rabTime, { onItemValueChange(itemDetails.copy(rabTime = it)) }, stringResource(R.string.rab_time_chas))
+        }
+
+        EntrySection(title = "Доплаты и надбавки") {
+            InputText(itemDetails.nochTime, { onItemValueChange(itemDetails.copy(nochTime = it)) }, stringResource(R.string.noch_time_chas))
+            InputText(itemDetails.prazdTime, { onItemValueChange(itemDetails.copy(prazdTime = it)) }, stringResource(R.string.prazd_time_chas))
+            InputText(itemDetails.prikazDen, { onItemValueChange(itemDetails.copy(prikazDen = it)) }, stringResource(R.string.prikaz_den))
+            InputText(itemDetails.prikazNoch, { onItemValueChange(itemDetails.copy(prikazNoch = it)) }, stringResource(R.string.prikaz_noch))
+            InputText(itemDetails.premia, { onItemValueChange(itemDetails.copy(premia = it)) }, stringResource(R.string.premia))
+            InputText(itemDetails.otherPayments, { onItemValueChange(itemDetails.copy(otherPayments = it)) }, stringResource(R.string.other_payments))
+        }
+
+        EntrySection(title = "Больничный и отпуск") {
+            InputText(itemDetails.bolnichniy, { onItemValueChange(itemDetails.copy(bolnichniy = it)) }, stringResource(R.string.bolnichniy))
+            InputText(itemDetails.otpuskDays, { onItemValueChange(itemDetails.copy(otpuskDays = it)) }, stringResource(R.string.otpuskDays_detail))
+            InputText(itemDetails.otpuskPay, { onItemValueChange(itemDetails.copy(otpuskPay = it)) }, stringResource(R.string.otpuskPay_detail))
+        }
+
+        EntrySection(title = stringResource(R.string.visluga_let)) {
+            val vislugaOptions = listOf("0", "5", "10", "15")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                vislugaOptions.forEach { option ->
                     Row(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable{onItemValueChange(itemDetails.copy(visluga = text))},
+                            .clickable { onItemValueChange(itemDetails.copy(visluga = option)) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (text == itemDetails.visluga),
-                            onClick = { onItemValueChange(itemDetails.copy(visluga = text)) }
+                            selected = option == itemDetails.visluga,
+                            onClick = { onItemValueChange(itemDetails.copy(visluga = option)) }
                         )
-                        Text(
-                            text = text,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
+                        Text(text = option, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun EntrySection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(22.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold
+            )
+            content()
         }
     }
 }
@@ -265,8 +256,8 @@ fun InputText(
                 value
             }
             //Разрешение на ввод и числа и точки.
-            if (newValue.all { ch -> ch.isDigit() || ch == '.'}) {
-                onValueChange(it)
+            if (newValue.all { ch -> ch.isDigit() || ch == '.' }) {
+                onValueChange(newValue)
             }
         },
         label = { Text(text = label) },
@@ -280,10 +271,14 @@ fun InputText(
                 isFocused = focusState.isFocused
             },
         singleLine = true,
+        shape = RoundedCornerShape(16.dp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            focusedLabelColor = MaterialTheme.colorScheme.primary
         )
     )
 }
@@ -317,10 +312,14 @@ fun InputYearAndMonth(
                 isFocused = focusState.isFocused
             },
         singleLine = true,
+        shape = RoundedCornerShape(16.dp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            focusedLabelColor = MaterialTheme.colorScheme.primary
         )
     )
 }

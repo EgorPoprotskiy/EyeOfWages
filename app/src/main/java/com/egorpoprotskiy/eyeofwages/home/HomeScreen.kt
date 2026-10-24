@@ -6,19 +6,22 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -54,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -71,6 +75,9 @@ import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.collections.set
+import java.text.NumberFormat
+import java.util.Currency
+import java.util.Locale
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -100,6 +107,8 @@ fun HomeScreen(
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         topBar = {
             MonthTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
@@ -112,7 +121,9 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = navigateToMonthEntry,
-                shape = androidx.compose.material3.MaterialTheme.shapes.medium,
+                shape = RoundedCornerShape(18.dp),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
             ) {
                 Icon(
@@ -157,24 +168,89 @@ private fun HomeBody(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
-        // Проверка на пустой список месяцев
+        // Сводная карточка показывает последний сохранённый расчёт без изменения данных в БД.
+        SalaryOverviewCard(monthList = monthList)
+
         if (monthList.isEmpty()) {
-            // Если список пуст, показываем текст
             Text(
-                text = "Нет доступных месяцев",
-                modifier = Modifier.padding(16.dp)
+                text = "Добавь первый месяц, чтобы здесь появилась история зарплаты.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
             )
         } else {
             MonthList(
                 monthList = monthList,
-                onMonthClick = { onMonthClick(it.id)},
+                onMonthClick = { onMonthClick(it.id) },
                 onSwipeDelete = onSwipeDelete,
-                modifier = modifier.fillMaxSize()
+                modifier = Modifier.weight(1f).fillMaxWidth()
             )
         }
     }
+}
+
+@Composable
+private fun SalaryOverviewCard(monthList: List<Month>) {
+    val latestMonth = monthList.maxWithOrNull(
+        compareBy<Month> { it.yearName }.thenBy { it.monthName }
+    )
+    val latestSalary = latestMonth?.let { MonthCalculations(it).itog }
+
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        shape = RoundedCornerShape(26.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "ПОСЛЕДНИЙ РАСЧЁТ",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f),
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = latestSalary?.let(::formatRubles) ?: "Пока нет данных",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontWeight = FontWeight.Bold
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = latestMonth?.let { "${it.monthName}.${it.yearName}" } ?: "Добавь первый месяц",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
+                )
+                Text(
+                    text = "Месяцев: ${monthList.size}",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
+}
+
+private fun formatRubles(value: Double): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale("ru", "RU"))
+    formatter.currency = Currency.getInstance("RUB")
+    formatter.maximumFractionDigits = 2
+    formatter.minimumFractionDigits = 2
+    return formatter.format(value)
 }
 
 
@@ -311,19 +387,27 @@ private fun MonthList(
                                 DismissDirection.EndToStart -> Alignment.CenterEnd
                                 null -> Alignment.CenterEnd
                             }
+                            // Красный фон и корзина появляются только во время активного свайпа.
+                            // В обычном состоянии фон полностью прозрачный, чтобы не окрашивать список.
+                            val isSwiping = dismissState.dismissDirection != null
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-//                                    .background(color)
-                                    //отступ иконки от краёв экрана.
+                                    .background(
+                                        if (isSwiping) MaterialTheme.colorScheme.errorContainer
+                                        else Color.Transparent
+                                    )
+                                    // Отступ иконки от краёв экрана.
                                     .padding(horizontal = 20.dp),
                                 contentAlignment = alignment
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Удалить",
-                                    tint = Color.White
-                                )
+                                if (isSwiping) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Удалить",
+                                        tint = MaterialTheme.colorScheme.onErrorContainer
+                                    )
+                                }
                             }
                         },
                         dismissContent = {
@@ -354,32 +438,38 @@ fun MonthItem(
 ) {
     Card(
         modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-        //назначение вцета для карточки, на основе выбранного цвета.
-//        colors = CardDefaults.cardColors(containerColor = colorResource(R.color.teal_700))
+        shape = RoundedCornerShape(22.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(horizontal = 18.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             //Строка с месяцем и годом.
             Text(
 //                text = "2024, Апрель:",
                 text = "${month.yearName}, ${month.monthName}",
-                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold,
             )
             //Разделитель
             HorizontalDivider(
-//                color = colorResource(R.color.teal_200),
-                thickness = 1.dp,
-                modifier = Modifier.padding(bottom = 10.dp)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f),
+                thickness = 1.dp
             )
             //Строка с итоговой выплатой.
             Text(
-                text = "${calculated.itog} руб.",
-                style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
+                text = formatRubles(calculated.itog),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -436,7 +526,7 @@ fun MonthListPreview() {
         Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0, 50000.0),
         Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0, 50000.0)
     )
-    MaterialTheme {
+    com.egorpoprotskiy.eyeofwages.ui.theme.EyeOfWagesTheme {
         MonthList(
             fakeMonths,
             onMonthClick = {},
@@ -452,7 +542,7 @@ fun MonthBodyPreview() {
         Month(1,4,2025,10000.0,160,160,0,0,10.0,5,12,12,10000.0, 777.0, 777.0, 777, 777.0, 50000.0),
         Month(2,4,2025,10000.0,160,160,0,0,10.0,5,12,12,20000.0, 777.0, 777.0, 777, 777.0, 50000.0)
     )
-    MaterialTheme {
+    com.egorpoprotskiy.eyeofwages.ui.theme.EyeOfWagesTheme {
         HomeBody(
             fakeMonths,
             onMonthClick = {},
@@ -464,7 +554,7 @@ fun MonthBodyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyEmptyListPreview() {
-    MaterialTheme {
+    com.egorpoprotskiy.eyeofwages.ui.theme.EyeOfWagesTheme {
         HomeBody(listOf(), onMonthClick = {}, onSwipeDelete = {})
     }
 }
