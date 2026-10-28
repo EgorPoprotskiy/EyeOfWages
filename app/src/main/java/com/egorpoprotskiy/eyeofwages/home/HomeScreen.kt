@@ -187,7 +187,7 @@ private fun HomeBody(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Сводная карточка показывает последний сохранённый расчёт.
+                // Финансовая сводка остаётся первой, чтобы главный показатель был виден сразу.
                 SalaryOverviewCard(monthList = monthList)
 
                 if (monthList.size >= 2) {
@@ -197,12 +197,7 @@ private fun HomeBody(
                 if (monthList.isNotEmpty()) {
                     SalaryStatsCard(monthList = monthList)
                 } else {
-                    Text(
-                        text = "Добавь первый месяц, чтобы здесь появилась история зарплаты.",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
-                    )
+                    EmptySalaryState()
                 }
             }
         }
@@ -229,15 +224,36 @@ private fun SalaryOverviewCard(monthList: List<Month>) {
             modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "ПОСЛЕДНИЙ РАСЧЁТ",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f),
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "ПОСЛЕДНИЙ РАСЧЁТ",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f),
+                    fontWeight = FontWeight.SemiBold
+                )
+                Box(
+                    modifier = Modifier
+                        .background(
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.10f),
+                            RoundedCornerShape(50)
+                        )
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = if (latestMonth == null) "НЕТ ДАННЫХ" else "ЗАРПЛАТА",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
             Text(
                 text = latestSalary?.let(::formatRubles) ?: "Пока нет данных",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontWeight = FontWeight.Bold
             )
@@ -258,6 +274,47 @@ private fun SalaryOverviewCard(monthList: List<Month>) {
                     fontWeight = FontWeight.SemiBold
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun EmptySalaryState() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(22.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
+                    .padding(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Text(
+                text = "Начни с первого расчёта",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = "Добавь месяц, чтобы отслеживать динамику дохода, среднюю зарплату и изменения со временем.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -292,7 +349,7 @@ private fun SalaryStatsCard(monthList: List<Month>) {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "СТАТИСТИКА ЗАРПЛАТЫ",
+                text = "СВОДКА ЗА ВСЁ ВРЕМЯ",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold
@@ -392,8 +449,13 @@ private fun SalaryStatItem(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 10.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
         Text(
             text = title,
@@ -672,20 +734,41 @@ private fun MonthList(
             item(key = "home_header") {
                 header()
             }
+            item(key = "month_section_heading") {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            text = "История зарплаты",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = if (monthList.isEmpty()) "Твои сохранённые расчёты появятся здесь" else "${monthList.size} ${monthList.size.let { count -> if (count % 10 == 1 && count % 100 != 11) "расчёт" else if (count % 10 in 2..4 && count % 100 !in 12..14) "расчёта" else "расчётов" }}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
             item(key = "month_search") {
                 OutlinedTextField(
                     value = monthSearchQuery,
                     onValueChange = { monthSearchQuery = it },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     singleLine = true,
-                    label = { Text("Поиск по месяцу или году") },
+                    label = { Text("Найти месяц") },
                     placeholder = { Text("Например, Октябрь или 2026") },
                     shape = RoundedCornerShape(16.dp)
                 )
             }
             item(key = "month_sort_controls") {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 2.dp, bottom = 8.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
