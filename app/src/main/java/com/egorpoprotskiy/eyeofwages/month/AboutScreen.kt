@@ -3,18 +3,19 @@ package com.egorpoprotskiy.eyeofwages.month
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,10 +23,11 @@ import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
 import com.egorpoprotskiy.eyeofwages.R
 import com.egorpoprotskiy.eyeofwages.navigation.NavigationDestination
 
-object AboutDestination: NavigationDestination {
+object AboutDestination : NavigationDestination {
     override val route = "about"
     override val titleRes = R.string.about_app
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
@@ -33,6 +35,8 @@ fun AboutScreen(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         topBar = {
             MonthTopAppBar(
                 title = stringResource(AboutDestination.titleRes),
@@ -54,56 +58,82 @@ fun AboutScreen(
 private fun AboutBody(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        contentPadding = PaddingValues(top = 12.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        //Секция "Версия"
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 22.dp, vertical = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "EYE OF WAGES",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Расчёт зарплаты — без лишней сложности",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "История расчётов, начисления и отпускные в одном месте.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.88f)
+                    )
+                }
+            }
+        }
+
         item {
             InfoSection(
                 title = stringResource(R.string.version_label),
                 content = listOf(stringResource(R.string.version_number))
             )
         }
-        //Секция "Новые функции"
         item {
             InfoSection(
                 title = stringResource(R.string.features_added),
-                content = listOf(
-                    "• Добавлено поле для дополнительных выплат(премия и т.п.)",
-                )
+                content = listOf("Добавлено поле для дополнительных выплат (премии и другие начисления).")
             )
         }
-        //Секция "Новые функции"
         item {
             InfoSection(
                 title = stringResource(R.string.prev_features_added),
                 content = listOf(
-                    "• Реализован автоматический расчёт отпускных (Средний Дневной Заработок - СДЗ) на основе 12 предшествующих месяцев.",
-                    "• Учёт исключаемых сумм (больничные) при расчёте СДЗ.",
-                    "• Реализован Pull-to-Refresh на главном экране.",
-                    "• Добавлена анимация исчезновения при удалении записи.",
-                    "• Добавлен экран 'О приложении'."
+                    "Автоматический расчёт отпускных (СДЗ) на основе 12 предшествующих месяцев.",
+                    "Учёт исключаемых сумм при расчёте среднего дневного заработка.",
+                    "Обновление списка жестом потягивания вниз.",
+                    "Анимация при удалении записи.",
+                    "Отдельный экран с информацией о приложении."
                 )
             )
         }
-        //Секция "Исправленные ошибки"
         item {
             InfoSection(
                 title = stringResource(R.string.bug_fixes),
                 content = listOf(
-                    "• Исправлена проблема миграции БД, обеспечивающая сохранность данных при обновлении.",
-                    "• Исправлена ошибка сброса свайпа при отмене удаления.",
-                    "• Улучшена обработка десятичных чисел."
+                    "Исправлена миграция базы данных для сохранения записей при обновлении.",
+                    "Исправлен сброс свайпа при отмене удаления.",
+                    "Улучшена обработка десятичных чисел."
                 )
             )
         }
-        //Секция "Планы на будущее"
         item {
             InfoSection(
                 title = stringResource(R.string.future_plans),
-                content = listOf(
-                    "• Сохранение данных"
-                )
+                content = listOf("Дальнейшее развитие расчётов и удобства работы с историей.")
             )
         }
     }
@@ -111,28 +141,37 @@ private fun AboutBody(modifier: Modifier = Modifier) {
 
 @Composable
 private fun InfoSection(title: String, content: List<String>) {
-    Column(
-        modifier = Modifier.fillMaxSize()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        content.forEach { item ->
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 17.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Text(
-                text = item,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 8.dp)
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold
             )
+            content.forEach { line ->
+                Text(
+                    text = line,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider()
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun AboutScreenPreview() {
     AboutBody()

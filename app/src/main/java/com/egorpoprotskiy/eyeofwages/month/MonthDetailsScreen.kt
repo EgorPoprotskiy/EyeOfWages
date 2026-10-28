@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -25,9 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +41,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
+import java.text.NumberFormat
+import java.util.Currency
+import java.util.Locale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.egorpoprotskiy.eyeofwages.AppViewModelProvider
 import com.egorpoprotskiy.eyeofwages.MonthTopAppBar
@@ -72,6 +77,8 @@ fun MonthDetailsScreen(
 //    val coroutineScope = rememberCoroutineScope()        //позволяет TopAppBar прокручивать содержимое(скрываться при прокрутке)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         topBar = {
             MonthTopAppBar(
                 title = stringResource(MonthDetailsDestination.titleRes),
@@ -140,7 +147,13 @@ fun MonthDetails(
     //переменная, которая хранит состояние expanded для кнопки свернуть/равернуть
     var expanded by remember { mutableStateOf(false) }
     Card(
-        modifier = modifier
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
@@ -225,14 +238,36 @@ fun MonthDetails(
 //                monthDetails = month.otpuskPay
                 monthDetails = calculated.otpuskPay
             )
-            Column (
-                modifier = Modifier
-                    .fillMaxSize()
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
-                MonthDetailsRow(
-                    labelDetails = stringResource(R.string.itog),
-                    monthDetails = calculated.itog
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = "ИТОГО К ВЫПЛАТЕ",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = calculated.itog?.let(::formatRubles) ?: "—",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 MonthItemButton(
                     expanded = expanded,
                     onClick = { expanded = !expanded }
@@ -267,17 +302,32 @@ fun MonthDetailsRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Text(
             modifier = Modifier.weight(1f),
             text = labelDetails,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            modifier = modifier.wrapContentSize(),
-            text = monthDetails?.toString() ?: "-",
+            modifier = Modifier.wrapContentSize(),
+            text = monthDetails?.let(::formatRubles) ?: "—",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.SemiBold
         )
     }
+}
+
+private fun formatRubles(value: Double): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale("ru", "RU"))
+    formatter.currency = Currency.getInstance("RUB")
+    formatter.maximumFractionDigits = 2
+    formatter.minimumFractionDigits = 2
+    return formatter.format(value)
 }
 
 @Composable
@@ -286,13 +336,17 @@ private fun MonthItemButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    IconButton(
+    TextButton(
         onClick = onClick,
         modifier = modifier.fillMaxWidth()
     ) {
+        Text(
+            text = if (expanded) "Скрыть дополнительные удержания" else "Показать дополнительные удержания",
+            style = MaterialTheme.typography.labelLarge
+        )
         Icon(
             imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-            contentDescription = "",
+            contentDescription = null,
             tint = MaterialTheme.colorScheme.secondary
         )
     }
@@ -302,7 +356,7 @@ private fun MonthItemButton(
 @Preview(showBackground = true)
 @Composable
 fun MonthDetailsScreenLightPreview() {
-    MaterialTheme(colorScheme = lightColorScheme()){
+    com.egorpoprotskiy.eyeofwages.ui.theme.EyeOfWagesTheme(darkTheme = false){
         MonthDetailsBody(
             month = Month(
                 id = 1,
@@ -345,7 +399,7 @@ fun MonthDetailsScreenLightPreview() {
 @Preview(showBackground = true)
 @Composable
 fun MonthDetailsScreenDarkPreview() {
-    MaterialTheme(colorScheme = darkColorScheme()){
+    com.egorpoprotskiy.eyeofwages.ui.theme.EyeOfWagesTheme(darkTheme = true){
         MonthDetailsBody(
             month = Month(
                 id = 1,
