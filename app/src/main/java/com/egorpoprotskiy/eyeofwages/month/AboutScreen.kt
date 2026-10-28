@@ -88,7 +88,7 @@ private fun AboutBody(modifier: Modifier = Modifier) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "История расчётов, начисления и отпускные в одном месте.",
+                        text = "История расчётов, статистика, графики и отпускные в одном месте.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.88f)
                     )
@@ -99,41 +99,55 @@ private fun AboutBody(modifier: Modifier = Modifier) {
         item {
             InfoSection(
                 title = stringResource(R.string.version_label),
-                content = listOf(stringResource(R.string.version_number))
+                content = listOf("1.5.0")
             )
         }
+
         item {
             InfoSection(
                 title = stringResource(R.string.features_added),
-                content = listOf("Добавлено поле для дополнительных выплат (премии и другие начисления).")
+                content = listOf(
+                    "Обновлённый главный экран с обзором зарплаты и истории расчётов.",
+                    "График изменения зарплаты за выбранный период.",
+                    "Статистика и сравнение с предыдущим месяцем.",
+                    "Поиск и сортировка записей в истории расчётов.",
+                    "Улучшено отображение информации о начислениях и отпускных."
+                )
             )
         }
+
         item {
             InfoSection(
                 title = stringResource(R.string.prev_features_added),
                 content = listOf(
-                    "Автоматический расчёт отпускных (СДЗ) на основе 12 предшествующих месяцев.",
+                    "Расчёт отпускных на основе среднего дневного заработка (СДЗ) за 12 предшествующих месяцев.",
                     "Учёт исключаемых сумм при расчёте среднего дневного заработка.",
+                    "Дополнительные выплаты: премии и другие начисления.",
                     "Обновление списка жестом потягивания вниз.",
                     "Анимация при удалении записи.",
                     "Отдельный экран с информацией о приложении."
                 )
             )
         }
+
         item {
             InfoSection(
                 title = stringResource(R.string.bug_fixes),
                 content = listOf(
-                    "Исправлена миграция базы данных для сохранения записей при обновлении.",
-                    "Исправлен сброс свайпа при отмене удаления.",
-                    "Улучшена обработка десятичных чисел."
+                    "Исправления и улучшения стабильности приложения.",
+                    "Улучшена обработка десятичных чисел.",
+                    "Улучшено взаимодействие с историей расчётов."
                 )
             )
         }
+
         item {
             InfoSection(
                 title = stringResource(R.string.future_plans),
-                content = listOf("Дальнейшее развитие расчётов и удобства работы с историей.")
+                content = listOf(
+                    "Дальнейшее развитие расчётов зарплаты.",
+                    "Улучшение аналитики и удобства работы с историей."
+                )
             )
         }
     }
